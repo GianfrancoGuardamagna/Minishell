@@ -15,6 +15,10 @@ void process_command(char *input)
 		exit(0);
 	else if (ft_strncmp(args[0], "env", 3) == 0)
 		ft_env();
+	else if (ft_strncmp(args[0], "export", 3) == 0)
+		manage_env(NULL, 1, args);
+	else if (ft_strncmp(args[0], "unset", 3) == 0)
+		manage_env(NULL, 2, args);
 	else if (ft_strncmp(args[0], "echo", 4) == 0)
 		ft_echo(args);
 	else

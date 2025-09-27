@@ -3,17 +3,17 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: gguardam <marvin@42.fr>                    +#+  +:+       +#+         #
+#    By: gguardam <gguardam@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/06/06 12:00:00 by gguardam          #+#    #+#              #
-#    Updated: 2025/06/06 12:00:00 by gguardam         ###   ########.fr        #
+#    Updated: 2025/09/27 16:27:02 by gguardam         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME = minishell
 
 CC = cc
-CFLAGS = -Wall -Wextra -Werror -g
+CFLAGS = -Wall -Wextra -Werror
 
 SRCDIR = .
 SOURCES = main.c \

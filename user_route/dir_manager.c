@@ -27,7 +27,7 @@ char *format_cwd(char *cwd)
 	size_t	len;
 	char	*home;
 
-	home = ft_strjoin("/home/", getenv("USERNAME"));
+	home = ft_strjoin("/home/", getenv("USER"));//Corregir esta gestion de errores, en mi casa es USERNAME, y aca es USER. La solucion deberia ser portable?
 	if (ft_strnstr(cwd, home, ft_strlen(home)))
 	{
 		if (ft_strlen(cwd) == 16)

@@ -17,6 +17,6 @@ void	ft_env(void);
 
 //utils
 //envs.c
-char **manage_env(char **envp, int type, char **arg)
+char **manage_env(char **envp, int type, char **arg);
 
 #endif

@@ -7,24 +7,44 @@ static void del_var(char **env_var,  char **arg)
 	int	len;
 
 	i = 0;
-	len = ft_strlen(arg[0]);
-	while((env_var[i]) && (ft_strncmp(env_var[i], arg[0], len) != 0))
+	len = ft_strlen(arg[1]);
+	while((env_var[i]) && (ft_strncmp(env_var[i], arg[1], len) != 0))
 		i++;
 	if (env_var[i])
-    {
-        free(env_var[i]);
-        while (env_var[i + 1])
-        {
-            env_var[i] = env_var[i + 1];
-            i++;
-        }
-        env_var[i] = NULL;
-    }
+	{
+		while (env_var[i + 1])
+		{
+			env_var[i] = env_var[i + 1];
+			i++;
+		}
+		env_var[i] = NULL;
+	}
 }
 
+//This function adds a variable
 static void add_var(char **env_var,  char **arg)
 {
-	
+	int	i;
+	int	j;
+	int	len;
+
+	i = 0;
+	j = 0;
+	len = 0;
+	while(arg[i])
+	{
+		len += ft_strlen(arg[i]);
+		i++;
+	}
+	i = 0;
+	while(env_var[i])
+		i++;
+	env_var = malloc(sizeof(char) * len + 1);
+	while(arg[j])
+	{
+		ft_strlcat(env_var[i], arg[j], ft_strlen(arg[j]));
+		j++;
+	}
 }
 
 char **manage_env(char **envp, int type, char **arg)
