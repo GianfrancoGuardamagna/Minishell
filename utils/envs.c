@@ -22,29 +22,26 @@ static void del_var(char **env_var,  char **arg)
 }
 
 //This function adds a variable
-static void add_var(char **env_var,  char **arg)
+static void add_var(char **env_var, char **arg)
 {
-	int	i;
-	int	j;
-	int	len;
+	int i = 0;
+	int var_len;
+	char *new_var;
 
-	i = 0;
-	j = 0;
-	len = 0;
-	while(arg[i])
-	{
-		len += ft_strlen(arg[i]);
+	while (env_var[i])
 		i++;
-	}
-	i = 0;
-	while(env_var[i])
-		i++;
-	env_var = malloc(sizeof(char) * len + 1);
-	while(arg[j])
-	{
-		ft_strlcat(env_var[i], arg[j], ft_strlen(arg[j]));
-		j++;
-	}
+	var_len = ft_strlen(arg[1]) + 1; // $NAME + 1 for '='
+	if (arg[2])
+		var_len += ft_strlen(arg[2]); // $VALUE
+	new_var = malloc(var_len + 1); // Allocate memory
+	if (!new_var)
+		return;
+	ft_strlcpy(new_var, arg[1], ft_strlen(arg[1]) + 1);
+	ft_strlcat(new_var, "=", var_len + 1);
+	if (arg[2])
+		ft_strlcat(new_var, arg[2], var_len + 1);
+	env_var[i] = new_var;
+	env_var[i + 1] = NULL;
 }
 
 char **manage_env(char **envp, int type, char **arg)
