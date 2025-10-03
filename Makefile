@@ -6,7 +6,7 @@
 #    By: gguardam <gguardam@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/06/06 12:00:00 by gguardam          #+#    #+#              #
-#    Updated: 2025/09/27 16:27:02 by gguardam         ###   ########.fr        #
+#    Updated: 2025/10/03 13:48:00 by gguardam         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -18,8 +18,8 @@ CFLAGS = -Wall -Wextra -Werror
 SRCDIR = .
 SOURCES = main.c \
           user_route/dir_manager.c \
-		  commands/ft_echo.c \
-		  commands/ft_env.c \
+		  commands_built/ft_echo.c \
+		  commands_built/ft_env.c \
 		  utils/envs.c \
 
 OBJECTS = $(SOURCES:.c=.o)

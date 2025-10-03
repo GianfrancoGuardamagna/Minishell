@@ -11,15 +11,15 @@ void process_command(char *input)
 		change_directory(args[1]);
 	else if (ft_strncmp(args[0], "pwd", 3) == 0)
 		printf("%s\n", getcwd(NULL, 0));
-	else if (ft_strncmp(args[0], "exit", 4) == 0)
+	else if (ft_strncmp(args[0], "exit", 4) == 0) //Estado de salida
 		exit(0);
 	else if (ft_strncmp(args[0], "env", 3) == 0)
 		ft_env();
-	else if (ft_strncmp(args[0], "export", 3) == 0)
+	else if (ft_strncmp(args[0], "export", 3) == 0) //Si no se le agrega key no agrega, si tiene = si porque es NULL
 		manage_env(NULL, 1, args);
 	else if (ft_strncmp(args[0], "unset", 3) == 0)
 		manage_env(NULL, 2, args);
-	else if (ft_strncmp(args[0], "echo", 4) == 0)
+	else if (ft_strncmp(args[0], "echo", 4) == 0) //Quitar espacio, -nnnnn -n-n-nz
 		ft_echo(args);
 	else
 		printf("Command not implemented yet: %s\n", args[0]);
@@ -33,6 +33,8 @@ int	main(int argc, char **argv, char **envp)
 	char	*cwd;
 	char	*prompt;
 
+	// printf("%p\n", *envp); //Controlar ingreso de las env
+	// exit(1);
 	manage_env(envp, 0, NULL);
 	while(1)
 	{
