@@ -1,22 +1,51 @@
 #include "../minishell.h"
 
-void	ft_echo(char **argv)
+static void	there_are_params(char **argv)
 {
 	int	i;
 	int	flag;
+	int	j;
 
 	i = 1;
-	flag = 0;
-	if(ft_strncmp(argv[i], "-n", 2) == 0)
+	j = 2;
+	flag = 1;
+	while (argv[i][j])
 	{
-		flag = 1;
-		i += 1;
+		if (argv[i][j] != 'n')
+			flag = 0;
+		j++;
 	}
-	while(argv[i])
+	if (flag)
+		i += 1;
+	while (argv[i])
 	{
-		printf("%s ", argv[i]);
+		printf("%s", argv[i]);
+		if (argv[i + 1])
+			printf(" ");
 		i++;
 	}
-	if(!flag)
+	if (!flag)
 		printf("\n");
+}
+
+void	ft_echo(char **argv)
+{
+	int	i;
+
+	i = 1;
+	if (argv[i] && ft_strncmp(argv[i], "-n", 2) == 0)
+		there_are_params(argv);
+	else if (!argv[i])
+		printf("\n");
+	else
+	{
+		while (argv[i])
+		{
+			printf("%s", argv[i]);
+			if (argv[i + 1])
+				printf(" ");
+			i++;
+		}
+		printf("\n");
+	}
 }

@@ -21,27 +21,60 @@ static void del_var(char **env_var,  char **arg)
 	}
 }
 
+static int	overwrite_variable(char **env_var, char	*new_var)
+{
+	int	i;
+	int	j;
+	int	new_var_name_len;
+
+	i = 0;
+	j = 0;
+	while(new_var[i] != '=')
+		i++;
+	new_var_name_len = i;
+	i = 0;
+	while(env_var[i])
+	{
+		j = 0;
+		while((env_var[i][j] == new_var[j]) && env_var[i][j] && new_var[j])
+			j++;
+		if(j == new_var_name_len && env_var[i][j] == '=')
+			return (i);
+		i++;
+	}
+	return (-1);
+}
+
 //This function adds a variable
 static void add_var(char **env_var, char **arg)
 {
-	int i = 0;
-	int var_len;
-	char *new_var;
+	int		i;
+	int		var_len;
+	char	*new_var;
+	int		pos_var;
 
-	while (env_var[i])
-		i++;
-	var_len = ft_strlen(arg[1]) + 1; // $NAME + 1 for '='
-	if (arg[2])
-		var_len += ft_strlen(arg[2]); // $VALUE
-	new_var = malloc(var_len + 1); // Allocate memory
-	if (!new_var)
-		return;
-	ft_strlcpy(new_var, arg[1], ft_strlen(arg[1]) + 1);
-	ft_strlcat(new_var, "=", var_len + 1);
-	if (arg[2])
-		ft_strlcat(new_var, arg[2], var_len + 1);
-	env_var[i] = new_var;
-	env_var[i + 1] = NULL;
+	i = 0;
+	if(ft_strchr(arg[1], '=') && arg[1][0] != '=')
+	{
+		var_len = ft_strlen(arg[1]) + 1; // Length + null terminator
+		new_var = malloc(var_len); // Allocate memory
+		if (!new_var)
+			return;
+		ft_strlcpy(new_var, arg[1], var_len); // Copy the entire "VAR=value"
+		while (env_var[i])
+			i++;
+		pos_var = overwrite_variable(env_var, new_var);
+		if(pos_var != -1)
+		{
+			free(env_var[pos_var]);
+			env_var[pos_var] = new_var;
+		}
+		else
+		{
+			env_var[i] = new_var;
+			env_var[i + 1] = NULL;
+		}
+	}
 }
 
 char **manage_env(char **envp, int type, char **arg)

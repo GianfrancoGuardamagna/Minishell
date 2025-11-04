@@ -17,10 +17,14 @@ CFLAGS = -Wall -Wextra -Werror
 
 SRCDIR = .
 SOURCES = main.c \
-          user_route/dir_manager.c \
-		  commands_built/ft_echo.c \
-		  commands_built/ft_env.c \
-		  utils/envs.c \
+			user_route/dir_manager.c \
+			commands_built/ft_echo.c \
+			commands_built/ft_env.c \
+			utils/envs.c \
+			utils/errors.c \
+			pipex/utils.c \
+			pipex/aux.c \
+			signals/signals.c \
 
 OBJECTS = $(SOURCES:.c=.o)
 
