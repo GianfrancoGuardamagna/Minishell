@@ -61,7 +61,7 @@ void process_command(char *input)
 	else if (ft_strncmp(args[0], "echo", 4) == 0)
 		ft_echo(args);
 	else
-		shall_i_pipe_it(args); // NO SE PUEDEN UTILIZAR LOS CMDS VIM, TOUCH, NANO, ETC
+		shall_i_pipe_it(args);
 		//printf("Command not implemented yet: %s\n", args[0]);
 }
 
@@ -75,20 +75,20 @@ int	main(int argc, char **argv, char **envp)
 	struct sigaction sa;
 
 	manage_env(envp, 0, NULL);
+
 	
+	rl_catch_signals = 0; //Variable global definida en la libreria readline
 	sa.sa_handler = sigint_handler;
 	sigemptyset(&sa.sa_mask);
-	sa.sa_flags = 0;
+	sa.sa_flags = SA_RESTART;
 	sigaction(SIGINT, &sa, NULL);
 	sa.sa_handler = SIG_IGN;
 	sigaction(SIGQUIT, &sa, NULL);
-	while(1) //Se queda pegado con el CTRL C
+	while(1)
 	{
 		cwd = getcwd(NULL, 0);
 		prompt = format_cwd(cwd);
 		input = readline(prompt);
-
-		// If input is NULL (Ctrl-D), exit
 		if (!input)
 		{
 			printf("exit\n");
