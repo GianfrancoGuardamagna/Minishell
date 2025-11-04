@@ -13,6 +13,9 @@
 #include <signal.h> //Sigaction
 #include "libft.h/libft.h"
 
+// Variable global para el código de salida
+extern int g_exit_status;
+
 //dir_manager
 int		change_directory(char *path);
 char	*format_cwd(char *cwd);

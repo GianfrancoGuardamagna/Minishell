@@ -6,6 +6,7 @@ static void just_execute_it_man(char **args)
 	char	**path_env;
 	char	*bin_path;
 	int		status;
+	int		exit_code;
 	pid_t	pid;
 
 	pid = fork();
@@ -22,7 +23,12 @@ static void just_execute_it_man(char **args)
 	else if (pid > 0)
 	{
 		waitpid(pid, &status, 0);
-		return ;
+		if (WIFEXITED(status))
+			g_exit_status = WEXITSTATUS(status);
+		else if (WIFSIGNALED(status))
+			g_exit_status = 128 + WTERMSIG(status);
+		else
+			g_exit_status = 1;
 	}
 }
 
@@ -67,12 +73,12 @@ void process_command(char *input)
 
 int	main(int argc, char **argv, char **envp)
 {
-	(void) argc;
-	(void) argv;
+	(void)	argc;
+	(void)	argv;
 	char	*input;
 	char	*cwd;
 	char	*prompt;
-	struct sigaction sa;
+	struct	sigaction sa;
 
 	manage_env(envp, 0, NULL);
 
