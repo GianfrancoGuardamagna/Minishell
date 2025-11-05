@@ -25,6 +25,18 @@ SOURCES = main.c \
 			pipex/utils.c \
 			pipex/aux.c \
 			signals/signals.c \
+			parser/parser_tokenizer0.c \
+			parser/parser_tokenizer_utils1.c \
+			parser/parser_builtins2.c \
+			parser/parser_parser_args2.c \
+			parser/parser_redirectionsPollitos3.c \
+			parser/parser_redirectionsPollo.c \
+			parser/parser_parser_main4.c \
+			parser/parser_parser_init5.c \
+			parser/parser_expander6.c \
+			parser/parser_expander_utils7.c \
+			parser/free_clean8.c \
+			parser/executor.c
 
 OBJECTS = $(SOURCES:.c=.o)
 

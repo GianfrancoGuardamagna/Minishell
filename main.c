@@ -45,6 +45,18 @@ static void shall_i_pipe_it(char **args)
 	//	return ;//okay_i_need_to_pipe_it()
 }
 
+static void	init_shell(t_shell *shell)
+{
+	if (!shell)
+		return ;
+	shell->env = manage_env(NULL, 0, NULL);;
+	shell->tokens = NULL;
+	shell->commands = NULL;
+	shell->exit_status = 0;
+	shell->stdin_copy = dup(STDIN_FILENO);
+	shell->stdout_copy = dup(STDOUT_FILENO);
+}
+
 void process_command(char *input)
 {
 	char **args;
@@ -78,11 +90,11 @@ int	main(int argc, char **argv, char **envp)
 	char	*input;
 	char	*cwd;
 	char	*prompt;
+	t_shell	shell;
 	struct	sigaction sa;
 
 	manage_env(envp, 0, NULL);
-
-	
+	init_shell(&shell);
 	rl_catch_signals = 0; //Variable global definida en la libreria readline
 	sa.sa_handler = sigint_handler;
 	sigemptyset(&sa.sa_mask);
@@ -102,15 +114,30 @@ int	main(int argc, char **argv, char **envp)
 			free(input);
 			break;
 		}
-
 		else if (*input)
 		{
 			add_history(input);
-			process_command(input);
+			shell.tokens = tokenize(input);
+			if (shell.tokens)
+			{
+				expand_variables(&shell, shell.tokens);
+				shell.commands = parse_tokens(&shell.tokens);
+				
+				if (shell.commands)
+				{
+					execute_commands(&shell);
+					free_commands(&shell.commands);
+					shell.commands = NULL;
+				}
+				free_tokens(&shell.tokens);
+				shell.tokens = NULL;
+			}
+			free(input);
+			//process_command(input);
 		}
-
 		free(input);
 		free(cwd);
+		cleanup_shell(&shell);
 	}
 	return (0);
 }
