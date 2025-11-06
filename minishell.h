@@ -41,8 +41,8 @@ typedef struct s_token
 // Command structure
 typedef struct s_cmd
 {
-	char			**as;
 	char			**av;
+	int				ac;
 	int				in_fd;
 	int				out_fd;
 	int				pipe[2];
@@ -91,6 +91,11 @@ void	freeing_env(char **env);
 char	*find_binary(char *command, char **paths);
 //char	**get_args(int type, char **argv);
 
+//Struct Utils
+void	init_shell(t_shell *shell);
+void	cleanup_shell(t_shell *shell);
+void	check_struct(t_shell *shell);
+
 // Parser Functions prototypes
 // Main
 void	init_shell(t_shell *shell);
@@ -105,6 +110,7 @@ void	expand_variables(t_shell *shell, t_token *tokens);
 char	*expand_string(t_shell *shell, char *str);
 char	*handle_single_quotes(char *str, int *i);
 char	*handle_double_quotes(t_shell *shell, char *str, int *i);
+void	handle_quotes_in_token(char *input, int *i, char *quote);
 char	*extract_word(char *input, int *i);
 char	*extract_metachar(char *input, int *i);
 int		handle_redirection(t_token **tokens, t_cmd *cmd);

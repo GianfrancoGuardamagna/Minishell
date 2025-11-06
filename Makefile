@@ -6,7 +6,7 @@
 #    By: gguardam <gguardam@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/06/06 12:00:00 by gguardam          #+#    #+#              #
-#    Updated: 2025/10/03 13:48:00 by gguardam         ###   ########.fr        #
+#    Updated: 2025/11/06 19:31:23 by gguardam         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -22,6 +22,7 @@ SOURCES = main.c \
 			commands_built/ft_env.c \
 			utils/envs.c \
 			utils/errors.c \
+			utils/struct_utils.c \
 			pipex/utils.c \
 			pipex/aux.c \
 			signals/signals.c \
@@ -36,7 +37,7 @@ SOURCES = main.c \
 			parser/parser_expander6.c \
 			parser/parser_expander_utils7.c \
 			parser/free_clean8.c \
-			parser/executor.c
+			parser/pollo_token.c
 
 OBJECTS = $(SOURCES:.c=.o)
 

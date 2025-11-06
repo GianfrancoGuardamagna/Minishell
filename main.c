@@ -1,12 +1,12 @@
 #include "minishell.h"
 
-static void just_execute_it_man(char **args)
+int	g_exit_status = 0;
+
+static void just_execute_it_man(t_shell *shell)
 {
-	char	**env;
 	char	**path_env;
 	char	*bin_path;
 	int		status;
-	int		exit_code;
 	pid_t	pid;
 
 	pid = fork();
@@ -14,11 +14,10 @@ static void just_execute_it_man(char **args)
 		exit (1);
 	else if (pid == 0)
 	{
-		env = manage_env(NULL, 0, NULL);
 		path_env = ft_split(getenv("PATH"), ':');
-		bin_path = find_binary(args[0], path_env);
-		if (execve(bin_path, args, env) == -1)
-			error_executing(2, env, args);
+		bin_path = find_binary(shell->commands->av[0], path_env);
+		if (execve(bin_path, shell->commands->av, shell->env) == -1)
+			error_executing(2, shell->env, shell->commands->av);
 	}
 	else if (pid > 0)
 	{
@@ -32,55 +31,41 @@ static void just_execute_it_man(char **args)
 	}
 }
 
-static void shall_i_pipe_it(char **args)
+static void execute_builtin(t_shell *shell)
 {
-	just_execute_it_man(args);
-	//Insted of looping args, it should loop *t_cmd
-	//i = 0;
-	//while(args[i])
-	//	i++;
-	//if(i == 1)
-	//	just_execute_it_man(args[0]); //SINGEL CMD WITHOUT FD MODS
-	//else
-	//	return ;//okay_i_need_to_pipe_it()
-}
-
-static void	init_shell(t_shell *shell)
-{
-	if (!shell)
-		return ;
-	shell->env = manage_env(NULL, 0, NULL);;
-	shell->tokens = NULL;
-	shell->commands = NULL;
-	shell->exit_status = 0;
-	shell->stdin_copy = dup(STDIN_FILENO);
-	shell->stdout_copy = dup(STDOUT_FILENO);
-}
-
-void process_command(char *input)
-{
-	char **args;
-	
-	args = ft_split(input, ' ');
-	if(!args || !args[0])
-		return ;
-	if (ft_strncmp(args[0], "cd", 2) == 0)
-		change_directory(args[1]);
-	else if (ft_strncmp(args[0], "pwd", 3) == 0)
+	if (ft_strncmp(shell->commands->av[0], "cd", 2) == 0)
+		change_directory(shell->commands->av[1]);
+	else if (ft_strncmp(shell->commands->av[0], "pwd", 3) == 0)
 		printf("%s\n", getcwd(NULL, 0));
-	else if (ft_strncmp(args[0], "exit", 4) == 0) //Estado de salida
+	else if (ft_strncmp(shell->commands->av[0], "exit", 4) == 0) //Estado de salida
 		exit(0);
-	else if (ft_strncmp(args[0], "env", 3) == 0)
+	else if (ft_strncmp(shell->commands->av[0], "env", 3) == 0)
 		ft_env();
-	else if (ft_strncmp(args[0], "export", 3) == 0)  //Se repiten las variables y no hay gestion de errores
-		manage_env(NULL, 1, args);
-	else if (ft_strncmp(args[0], "unset", 3) == 0)
-		manage_env(NULL, 2, args);
-	else if (ft_strncmp(args[0], "echo", 4) == 0)
-		ft_echo(args);
-	else
-		shall_i_pipe_it(args);
-		//printf("Command not implemented yet: %s\n", args[0]);
+	else if (ft_strncmp(shell->commands->av[0], "echo", 4) == 0)
+		ft_echo(shell->commands);
+	//else if (ft_strncmp(shell->commands->av[0], "export", 3) == 0)  //Se repiten las variables y no hay gestion de errores
+		//manage_env(NULL, 1, args);
+	//else if (ft_strncmp(shell->commands->av[0], "unset", 3) == 0)
+		//manage_env(NULL, 2, args);
+}
+
+static void	evaluate_struct(t_shell *shell)
+{
+	int	i;
+
+	i = 0;
+	if (!shell || !shell->commands)
+		return ;
+
+	if (!shell->commands->next)
+	{
+		if(shell->commands->is_builtin)
+			execute_builtin(shell);
+		else
+			just_execute_it_man(shell);
+	}
+	// else
+	// 	execute_pipeline(shell, shell->commands);
 }
 
 int	main(int argc, char **argv, char **envp)
@@ -124,18 +109,12 @@ int	main(int argc, char **argv, char **envp)
 				shell.commands = parse_tokens(&shell.tokens);
 				
 				if (shell.commands)
-				{
-					execute_commands(&shell);
-					free_commands(&shell.commands);
-					shell.commands = NULL;
-				}
-				free_tokens(&shell.tokens);
-				shell.tokens = NULL;
+					evaluate_struct(&shell);
 			}
 			free(input);
-			//process_command(input);
 		}
-		free(input);
+		else
+			free(input);
 		free(cwd);
 		cleanup_shell(&shell);
 	}

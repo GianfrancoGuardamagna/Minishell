@@ -1,6 +1,6 @@
 #include "../minishell.h"
 
-static void	there_are_params(char **argv)
+static void	there_are_params(t_cmd *command)
 {
 	int	i;
 	int	flag;
@@ -9,18 +9,18 @@ static void	there_are_params(char **argv)
 	i = 1;
 	j = 2;
 	flag = 1;
-	while (argv[i][j])
+	while (command->av[i])
 	{
-		if (argv[i][j] != 'n')
+		if (command->av[i] != 'n')
 			flag = 0;
 		j++;
 	}
 	if (flag)
 		i += 1;
-	while (argv[i])
+	while (command->av[i])
 	{
-		printf("%s", argv[i]);
-		if (argv[i + 1])
+		printf("%s", command->av[i]); //while que escriba en write el fd
+		if (command->av[i][i + 1])
 			printf(" ");
 		i++;
 	}
@@ -28,15 +28,15 @@ static void	there_are_params(char **argv)
 		printf("\n");
 }
 
-void	ft_echo(char **argv)
+void	ft_echo(t_cmd *command)
 {
 	int	i;
 
 	i = 1;
-	if (argv[i] && ft_strncmp(argv[i], "-n", 2) == 0)
-		there_are_params(argv);
+	if (command->av[1] && ft_strncmp(command->av[1], "-n", 2) == 0)
+		there_are_params(command);
 	else if (!argv[i])
-		printf("\n");
+		write("\n");
 	else
 	{
 		while (argv[i])
