@@ -2,37 +2,40 @@
 
 int	g_exit_status = 0;
 
-static void just_execute_it_man(t_shell *shell)
-{
-	char	**path_env;
-	char	*bin_path;
-	int		status;
-	pid_t	pid;
+//static void just_execute_it_man(t_shell *shell)
+//{
+//	char	**path_env;
+//	char	*bin_path;
+//	int		status;
+//	pid_t	pid;
 
-	pid = fork();
-	if (pid == -1)
-		exit (1);
-	else if (pid == 0)
-	{
-		path_env = ft_split(getenv("PATH"), ':');
-		bin_path = find_binary(shell->commands->av[0], path_env);
-		if (execve(bin_path, shell->commands->av, shell->env) == -1)
-			error_executing(2, shell->env, shell->commands->av);
-	}
-	else if (pid > 0)
-	{
-		waitpid(pid, &status, 0);
-		if (WIFEXITED(status))
-			g_exit_status = WEXITSTATUS(status);
-		else if (WIFSIGNALED(status))
-			g_exit_status = 128 + WTERMSIG(status);
-		else
-			g_exit_status = 1;
-	}
-}
+//	pid = fork();
+//	if (pid == -1)
+//		exit (1);
+//	else if (pid == 0)
+//	{
+//		path_env = ft_split(getenv("PATH"), ':');
+//		bin_path = find_binary(shell->commands->av[0], path_env);
+//		if (execve(bin_path, shell->commands->av, shell->env) == -1)
+//			error_executing(2, shell->env, shell->commands->av);
+//	}
+//	else if (pid > 0)
+//	{
+//		waitpid(pid, &status, 0);
+//		if (WIFEXITED(status))
+//			g_exit_status = WEXITSTATUS(status);
+//		else if (WIFSIGNALED(status))
+//			g_exit_status = 128 + WTERMSIG(status);
+//		else
+//			g_exit_status = 1;
+//	}
+//}
 
 static void execute_builtin(t_shell *shell)
 {
+	if (!shell || !shell->commands || !shell->commands->av || !shell->commands->av[0])
+		return;
+		
 	if (ft_strncmp(shell->commands->av[0], "cd", 2) == 0)
 		change_directory(shell->commands->av[1]);
 	else if (ft_strncmp(shell->commands->av[0], "pwd", 3) == 0)
@@ -51,18 +54,19 @@ static void execute_builtin(t_shell *shell)
 
 static void	evaluate_struct(t_shell *shell)
 {
-	int	i;
+	//int	i;
 
-	i = 0;
+	//i = 0;
 	if (!shell || !shell->commands)
 		return ;
 
 	if (!shell->commands->next)
 	{
+		check_struct(shell);
 		if(shell->commands->is_builtin)
 			execute_builtin(shell);
-		else
-			just_execute_it_man(shell);
+		//else
+		//	just_execute_it_man(shell);
 	}
 	// else
 	// 	execute_pipeline(shell, shell->commands);

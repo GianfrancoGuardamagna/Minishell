@@ -70,7 +70,7 @@ int		change_directory(char *path);
 char	*format_cwd(char *cwd);
 
 //commands
-void	ft_echo(char **argv);
+void	ft_echo(t_cmd *command);
 void	ft_env(void);
 
 //utils

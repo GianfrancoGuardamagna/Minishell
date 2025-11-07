@@ -37,7 +37,7 @@ SOURCES = main.c \
 			parser/parser_expander6.c \
 			parser/parser_expander_utils7.c \
 			parser/free_clean8.c \
-			parser/pollo_token.c
+#			parser/pollo_token.c
 
 OBJECTS = $(SOURCES:.c=.o)
 

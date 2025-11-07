@@ -9,9 +9,9 @@ static void	there_are_params(t_cmd *command)
 	i = 1;
 	j = 2;
 	flag = 1;
-	while (command->av[i])
+	while (command->av[i][j])
 	{
-		if (command->av[i] != 'n')
+		if (command->av[i][j] != 'n')
 			flag = 0;
 		j++;
 	}
@@ -19,33 +19,44 @@ static void	there_are_params(t_cmd *command)
 		i += 1;
 	while (command->av[i])
 	{
-		printf("%s", command->av[i]); //while que escriba en write el fd
+		j = 0;
+		while(command->av[i][j])
+		{
+			write(command->out_fd, &command->av[i][j], 1);
+			j++;
+		}
 		if (command->av[i][i + 1])
-			printf(" ");
+			write(command->out_fd, " ", 1);
 		i++;
 	}
 	if (!flag)
-		printf("\n");
+		write(command->out_fd, "\n", 1);
 }
 
 void	ft_echo(t_cmd *command)
 {
 	int	i;
+	int	j;
 
 	i = 1;
-	if (command->av[1] && ft_strncmp(command->av[1], "-n", 2) == 0)
+	if (!command->av[i])
+		write(command->out_fd, "\n", 1);
+	else if (command->av[i] && ft_strncmp(command->av[1], "-n", 2) == 0)
 		there_are_params(command);
-	else if (!argv[i])
-		write("\n");
 	else
 	{
-		while (argv[i])
+		while (command->av[i])
 		{
-			printf("%s", argv[i]);
-			if (argv[i + 1])
-				printf(" ");
+			j = 0;
+			while (command->av[i][j])
+			{
+				write(command->out_fd, &command->av[i][j], 1);
+				j++;
+			}
+			if (command->av[i + 1])
+				write(command->out_fd, " ", 1);
 			i++;
 		}
-		printf("\n");
+		write(command->out_fd, "\n", 1);
 	}
 }

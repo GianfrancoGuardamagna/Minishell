@@ -8,8 +8,8 @@ void	init_shell(t_shell *shell)
 	shell->tokens = NULL;
 	shell->commands = NULL;
 	shell->exit_status = 0;
-	shell->stdin_copy = dup(STDIN_FILENO);
-	shell->stdout_copy = dup(STDOUT_FILENO);
+	shell->stdin_copy = STDIN_FILENO;
+	shell->stdout_copy = STDOUT_FILENO;
 }
 
 void	cleanup_shell(t_shell *shell)
@@ -29,28 +29,31 @@ void	cleanup_shell(t_shell *shell)
 void	check_struct(t_shell *shell)
 {
 	int i;
+	t_cmd *current;
 
 	i = 0;
 	printf("Stdin: %d\n", shell->stdin_copy);
 	printf("Stdout: %d\n", shell->stdout_copy);
 	printf("Exit Status: %d\n", shell->exit_status);
 	printf("/////////////////////Commands///////////////////////////\n");
-	while(shell->commands)
+	current = shell->commands;  // Usar una variable temporal
+	while(current)
 	{
-		printf("FDdin: %d\n", shell->commands->in_fd);
-		printf("FDout: %d\n", shell->commands->out_fd);
-		printf("Pipe 0: %d\n", shell->commands->pipe[0]);
-		printf("Pipe 1: %d\n", shell->commands->pipe[1]);
-		printf("Is Built in: %d\n", shell->commands->is_builtin);
-		printf("Stdin: %d\n", shell->stdin_copy);
-		printf("Stdout: %d\n", shell->stdout_copy);
+		printf("FDdin: %d\n", current->in_fd);
+		printf("FDout: %d\n", current->out_fd);
+		printf("Pipe 0: %d\n", current->pipe[0]);
+		printf("Pipe 1: %d\n", current->pipe[1]);
+		printf("Is Built in: %d\n", current->is_builtin);
 		i = 0;
-		while(shell->commands->av[i])
+		if (current->av)  // Verificar que av no sea NULL
 		{
-			printf("As %d: %s\n", i,shell->commands->av[i]);
-			i++;
+			while(current->av[i])
+			{
+				printf("As %d: %s\n", i, current->av[i]);
+				i++;
+			}
 		}
 		printf("////////////////////////////////////////////////\n");
-		shell->commands = shell->commands->next;
+		current = current->next;  // Mover solo la variable temporal
 	}
 }
