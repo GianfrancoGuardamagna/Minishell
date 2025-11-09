@@ -1,10 +1,10 @@
 #include "../minishell.h"
 
-void	init_shell(t_shell *shell)
+void	init_shell(t_shell *shell, char **envp)
 {
 	if (!shell)
 		return ;
-	shell->env = manage_env(NULL, 0, NULL);
+	shell->env = envp;
 	shell->tokens = NULL;
 	shell->commands = NULL;
 	shell->exit_status = 0;

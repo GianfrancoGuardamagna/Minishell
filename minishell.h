@@ -71,12 +71,24 @@ char	*format_cwd(char *cwd);
 
 //commands
 void	ft_echo(t_cmd *command);
-void	ft_env(void);
+void	ft_env(t_shell *shell);
+void	ft_pwd(t_cmd *command);
 
-//utils
-char	**manage_env(char **envp, int type, char **arg);
+//execution
+void just_execute_it_man(t_shell *shell);
+
+//Utils Errors
 void	error_executing\
 (int site_of_error, char **env, char **cmd_params);
+void write_error_message(int fd, char *cmd, char *arg, char *msg);
+
+//Utils Envs
+void	export_variables(t_shell *shell);
+void	unset_variables(t_shell *shell);
+int		is_valid_var_name(char *name);
+int		find_variable_index(char **env_var, char *var_name, int name_len);
+int		count_env_vars(char **env_var);
+void	del_var(t_shell *shell);
 
 //signals
 void	sigint_handler(int sig);
@@ -92,15 +104,11 @@ char	*find_binary(char *command, char **paths);
 //char	**get_args(int type, char **argv);
 
 //Struct Utils
-void	init_shell(t_shell *shell);
+void	init_shell(t_shell *shell, char **envp);
 void	cleanup_shell(t_shell *shell);
 void	check_struct(t_shell *shell);
 
 // Parser Functions prototypes
-// Main
-void	init_shell(t_shell *shell);
-void	cleanup_shell(t_shell *shell);
-
 // Parser tokenizer
 int	is_metachar(char c);
 t_token_type	get_token_type(char *str);

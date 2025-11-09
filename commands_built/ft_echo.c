@@ -25,7 +25,7 @@ static void	there_are_params(t_cmd *command)
 			write(command->out_fd, &command->av[i][j], 1);
 			j++;
 		}
-		if (command->av[i][i + 1])
+		if (command->av[i + 1])
 			write(command->out_fd, " ", 1);
 		i++;
 	}
@@ -36,7 +36,6 @@ static void	there_are_params(t_cmd *command)
 void	ft_echo(t_cmd *command)
 {
 	int	i;
-	int	j;
 
 	i = 1;
 	if (!command->av[i])
@@ -47,12 +46,7 @@ void	ft_echo(t_cmd *command)
 	{
 		while (command->av[i])
 		{
-			j = 0;
-			while (command->av[i][j])
-			{
-				write(command->out_fd, &command->av[i][j], 1);
-				j++;
-			}
+			write(command->out_fd, command->av[i], ft_strlen(command->av[i]));
 			if (command->av[i + 1])
 				write(command->out_fd, " ", 1);
 			i++;

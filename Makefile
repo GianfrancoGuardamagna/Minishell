@@ -20,7 +20,9 @@ SOURCES = main.c \
 			user_route/dir_manager.c \
 			commands_built/ft_echo.c \
 			commands_built/ft_env.c \
+			commands_built/ft_pwd.c \
 			utils/envs.c \
+			utils/envs_utils.c \
 			utils/errors.c \
 			utils/struct_utils.c \
 			pipex/utils.c \
@@ -37,7 +39,6 @@ SOURCES = main.c \
 			parser/parser_expander6.c \
 			parser/parser_expander_utils7.c \
 			parser/free_clean8.c \
-#			parser/pollo_token.c
 
 OBJECTS = $(SOURCES:.c=.o)
 

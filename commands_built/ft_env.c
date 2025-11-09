@@ -1,15 +1,20 @@
 #include "../minishell.h"
 
-void ft_env(void)
+void ft_env(t_shell *shell)
 {
-	char	**envs;
-	int		i;
+	int	i;
+	int	j;
 
 	i = 0;
-	envs = manage_env(NULL, 0, NULL);
-	while(envs[i])
+	while(shell->env[i])
 	{
-		printf("%s\n",envs[i]);
+		j = 0;
+		while(shell->env[i][j])
+		{
+			write(shell->commands->out_fd, &shell->env[i][j], 1);
+			j++;
+		}
+		write(shell->commands->out_fd, "\n", 1);
 		i++;
 	}
 }

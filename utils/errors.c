@@ -20,3 +20,16 @@ void	error_executing\
 	else
 		exit((perror("execve"), 127));
 }
+
+// Función auxiliar para escribir mensajes de error usando el FD correcto
+void write_error_message(int fd, char *cmd, char *arg, char *msg)
+{
+	write(fd, "bash: ", 6);
+	write(fd, cmd, ft_strlen(cmd));
+	write(fd, ": `", 3);
+	write(fd, arg, ft_strlen(arg));
+	write(fd, "': ", 3);
+	write(fd, msg, ft_strlen(msg));
+	write(fd, "\n", 1);
+}
+

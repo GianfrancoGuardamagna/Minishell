@@ -1,6 +1,5 @@
 #include "../minishell.h"
 
-//Por que funciona el autocompletado?
 int change_directory(char *path)
 {
 	if (!path)

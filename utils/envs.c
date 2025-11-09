@@ -1,93 +1,144 @@
 #include "../minishell.h"
 
-//This function deletes frees the variable and then took backwards the rest of vars, so it doesnt keep a blank space
-static void del_var(char **env_var,  char **arg)
+//This function adds or modifies a variable like bash export
+static void add_or_modify_var(char **env_var, char *var_assignment)
 {
-	int	i;
-	int	len;
-
-	i = 0;
-	len = ft_strlen(arg[1]);
-	while((env_var[i]) && (ft_strncmp(env_var[i], arg[1], len) != 0))
-		i++;
-	if (env_var[i])
-	{
-		while (env_var[i + 1])
-		{
-			env_var[i] = env_var[i + 1];
-			i++;
-		}
-		env_var[i] = NULL;
-	}
-}
-
-static int	overwrite_variable(char **env_var, char	*new_var)
-{
-	int	i;
-	int	j;
-	int	new_var_name_len;
-
-	i = 0;
-	j = 0;
-	while(new_var[i] != '=')
-		i++;
-	new_var_name_len = i;
-	i = 0;
-	while(env_var[i])
-	{
-		j = 0;
-		while((env_var[i][j] == new_var[j]) && env_var[i][j] && new_var[j])
-			j++;
-		if(j == new_var_name_len && env_var[i][j] == '=')
-			return (i);
-		i++;
-	}
-	return (-1);
-}
-
-//This function adds a variable
-static void add_var(char **env_var, char **arg)
-{
-	int		i;
-	int		var_len;
+	char	*equals_pos;
+	char	*var_name;
 	char	*new_var;
-	int		pos_var;
+	int		name_len;
+	int		var_index;
+	int		env_count;
+	int		total_len;
 
-	i = 0;
-	if(ft_strchr(arg[1], '=') && arg[1][0] != '=')
+	equals_pos = ft_strchr(var_assignment, '=');
+	if (!equals_pos)
 	{
-		var_len = ft_strlen(arg[1]) + 1; // Length + null terminator
-		new_var = malloc(var_len); // Allocate memory
+		// export VAR (sin valor) - bash behavior: crea variable vacía
+		name_len = ft_strlen(var_assignment);
+		total_len = name_len + 2; // "VAR=" + null
+		new_var = malloc(total_len);
 		if (!new_var)
 			return;
-		ft_strlcpy(new_var, arg[1], var_len); // Copy the entire "VAR=value"
-		while (env_var[i])
-			i++;
-		pos_var = overwrite_variable(env_var, new_var);
-		if(pos_var != -1)
+		ft_strlcpy(new_var, var_assignment, name_len + 1);
+		ft_strlcat(new_var, "=", total_len);
+		var_name = var_assignment;
+	}
+	else
+	{
+		// export VAR=value
+		name_len = equals_pos - var_assignment;
+		total_len = ft_strlen(var_assignment) + 1;
+		new_var = malloc(total_len);
+		if (!new_var)
+			return;
+		ft_strlcpy(new_var, var_assignment, total_len);
+		
+		// Crear string temporal para el nombre
+		var_name = malloc(name_len + 1);
+		if (!var_name)
 		{
-			free(env_var[pos_var]);
-			env_var[pos_var] = new_var;
+			free(new_var);
+			return;
+		}
+		ft_strlcpy(var_name, var_assignment, name_len + 1);
+	}
+
+	// Buscar si la variable ya existe
+	var_index = find_variable_index(env_var, var_name, name_len);
+	
+	if (var_index != -1)
+	{
+		// Variable existe - reemplazar
+		free(env_var[var_index]);
+		env_var[var_index] = new_var;
+	}
+	else
+	{
+		// Variable nueva - agregar al final
+		env_count = count_env_vars(env_var);
+		env_var[env_count] = new_var;
+		env_var[env_count + 1] = NULL;
+	}
+
+	// Liberar memoria temporal del nombre si se creó
+	if (equals_pos && var_name != var_assignment)
+		free(var_name);
+}
+
+// Función principal para manejar export como en bash
+void	export_variables(t_shell *shell)
+{
+	int i;
+	char *var_name;
+	char *equals_pos;
+	int name_len;
+
+	if (!shell || !shell->commands || !shell->commands->av)
+		return;
+
+	// Si no hay argumentos, mostrar todas las variables (como bash)
+	if (!shell->commands->av[1])
+	{
+		// TODO: Implementar mostrar variables en formato export
+		ft_env(shell); // Por ahora usa env
+		return;
+	}
+
+	i = 1;
+	while (shell->commands->av[i])
+	{
+		equals_pos = ft_strchr(shell->commands->av[i], '=');
+		
+		if (equals_pos)
+		{
+			// export VAR=value
+			name_len = equals_pos - shell->commands->av[i];
+			var_name = malloc(name_len + 1);
+			if (!var_name)
+				return;
+			ft_strlcpy(var_name, shell->commands->av[i], name_len + 1);
 		}
 		else
 		{
-			env_var[i] = new_var;
-			env_var[i + 1] = NULL;
+			// export VAR (sin valor)
+			var_name = shell->commands->av[i];
 		}
+
+		// Validar nombre de variable
+		if (is_valid_var_name(var_name))
+			add_or_modify_var(shell->env, shell->commands->av[i]);
+		else
+			write_error_message(shell->commands->out_fd, "export", shell->commands->av[i], "not a valid identifier");
+
+		if (equals_pos && var_name != shell->commands->av[i])
+			free(var_name);
+		i++;
 	}
 }
 
-char **manage_env(char **envp, int type, char **arg)
+// Función para manejar unset
+void	unset_variables(t_shell *shell)
 {
-	static	char **env_var;
+	int i;
 
-	if(envp && type == 0 && !arg)
-		env_var = envp;
-	else if(!envp && type == 0 && !arg)
-		return (env_var);
-	else if(!envp && type == 1 && arg)
-		add_var(env_var, arg);
-	else if(!envp && type == 2 && arg)
-		del_var(env_var, arg);
-	return (NULL);
+	if (!shell || !shell->commands || !shell->commands->av)
+		return;
+
+	// Procesar cada argumento de unset
+	i = 1;
+	while (shell->commands->av[i])
+	{
+		if (is_valid_var_name(shell->commands->av[i]))
+		{
+			// Temporalmente cambiar av[1] para usar del_var
+			char *original = shell->commands->av[1];
+			shell->commands->av[1] = shell->commands->av[i];
+			del_var(shell);
+			shell->commands->av[1] = original;
+		}
+		else
+			write_error_message(shell->commands->out_fd, "unset", shell->commands->av[i], "not a valid identifier");
+		i++;
+	}
 }
