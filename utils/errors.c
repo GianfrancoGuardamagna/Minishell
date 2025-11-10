@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   errors.c                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: gguardam <gguardam@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/11/10 18:37:37 by gguardam          #+#    #+#             */
+/*   Updated: 2025/11/10 19:16:14 by gguardam         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../minishell.h"
 
 void	error_executing\
@@ -22,7 +34,7 @@ void	error_executing\
 }
 
 // Función auxiliar para escribir mensajes de error usando el FD correcto
-void write_error_message(int fd, char *cmd, char *arg, char *msg)
+void	write_error_message(int fd, char *cmd, char *arg, char *msg)
 {
 	write(fd, "bash: ", 6);
 	write(fd, cmd, ft_strlen(cmd));
@@ -32,4 +44,3 @@ void write_error_message(int fd, char *cmd, char *arg, char *msg)
 	write(fd, msg, ft_strlen(msg));
 	write(fd, "\n", 1);
 }
-

@@ -34,6 +34,8 @@ static void execute_pipeline(t_shell *shell)
 	int		pipe_fd[2];
 	pid_t	pid;
 	int		prev_fd;
+	char **path_env;
+	char *bin_path;
 	
 	current = shell->commands;
 	prev_fd = STDIN_FILENO;
@@ -95,8 +97,12 @@ static void execute_pipeline(t_shell *shell)
 			}
 			else
 			{
-				char **path_env = ft_split(getenv("PATH"), ':');
-				char *bin_path = find_binary(current->av[0], path_env);
+				char *path_str = get_env_value(shell, "PATH");
+				if (path_str)
+					path_env = ft_split(path_str, ':');
+				else
+					path_env = NULL;
+				bin_path = find_binary(current->av[0], path_env);
 				if (execve(bin_path, current->av, shell->env) == -1)
 					error_executing(2, shell->env, current->av);
 			}
@@ -161,7 +167,11 @@ void just_execute_it_man(t_shell *shell)
 			close(shell->commands->in_fd);
 		}
 		
-		path_env = ft_split(getenv("PATH"), ':');
+		char *path_str = get_env_value(shell, "PATH");
+		if (path_str)
+			path_env = ft_split(path_str, ':');
+		else
+			path_env = NULL;
 		bin_path = find_binary(shell->commands->av[0], path_env);
 		if (execve(bin_path, shell->commands->av, shell->env) == -1)
 			error_executing(2, shell->env, shell->commands->av);

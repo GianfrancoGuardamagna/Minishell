@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_echo.c                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: gguardam <gguardam@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/11/10 18:35:13 by gguardam          #+#    #+#             */
+/*   Updated: 2025/11/10 18:35:16 by gguardam         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../minishell.h"
 
 static void	there_are_params(t_cmd *command)
@@ -19,12 +31,7 @@ static void	there_are_params(t_cmd *command)
 		i += 1;
 	while (command->av[i])
 	{
-		j = 0;
-		while(command->av[i][j])
-		{
-			write(command->out_fd, &command->av[i][j], 1);
-			j++;
-		}
+		ft_putstr_fd(command->av[i], command->out_fd);
 		if (command->av[i + 1])
 			write(command->out_fd, " ", 1);
 		i++;

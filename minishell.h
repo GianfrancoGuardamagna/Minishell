@@ -85,6 +85,7 @@ void write_error_message(int fd, char *cmd, char *arg, char *msg);
 //Utils Envs
 void	export_variables(t_shell *shell);
 void	unset_variables(t_shell *shell);
+char 	*get_env_value(t_shell *shell, char *var_name);
 int		is_valid_var_name(char *name);
 int		find_variable_index(char **env_var, char *var_name, int name_len);
 int		count_env_vars(char **env_var);
