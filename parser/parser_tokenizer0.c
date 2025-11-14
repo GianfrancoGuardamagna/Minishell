@@ -6,7 +6,7 @@
 /*   By: axgimene <axgimene@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/06 12:38:04 by axgimene          #+#    #+#             */
-/*   Updated: 2025/11/03 13:59:17 by axgimene         ###   ########.fr       */
+/*   Updated: 2025/11/06 13:06:06 by axgimene         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,8 +14,8 @@
 
 int	is_metachar(char c)
 {
-	return (c == '|' || c == '<' || c == '>'
-		|| c == ' ' || c == '\t' || c == '\n');
+	return (c == '|' || c == '<' || c == '>' \
+|| c == ' ' || c == '\t' || c == '\n');
 }
 
 t_token_type	get_token_type(char *str)
@@ -65,24 +65,4 @@ void	handle_quotes_in_token(char *input, int *i, char *quote)
 		*quote = 0;
 		return ;
 	}
-}
-
-char	*extract_word(char *input, int *i)
-{
-	int		start;
-	int		len;
-	char	quote;
-
-	start = *i;
-	len = 0;
-	quote = 0;
-	while (input[*i] && (!is_metachar(input[*i]) || quote))
-	{
-		handle_quotes_in_token(input, i, &quote);
-		if (!input[*i])
-			break ;
-		len++;
-		(*i)++;
-	}
-	return (ft_substr(input, start, len));
 }

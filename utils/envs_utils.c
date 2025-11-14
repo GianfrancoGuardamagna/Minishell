@@ -83,7 +83,7 @@ void	del_var(t_shell *shell)
 	}
 }
 
-char	*get_env_value(char **env, const char *var_name)
+char	**get_path_values(char **env, const char *var_name)
 {
 	int		i;
 	int		var_len;
@@ -96,7 +96,7 @@ char	*get_env_value(char **env, const char *var_name)
 	{
 		if (ft_strncmp(env[i], var_name, var_len) == 0 \
 && env[i][var_len] == '=')
-			return (env[i] + var_len + 1);
+			return (ft_split((env[i] + var_len + 1), ':'));
 		i++;
 	}
 	return (NULL);

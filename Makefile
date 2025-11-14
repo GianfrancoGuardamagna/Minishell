@@ -15,30 +15,36 @@ NAME = minishell
 CC = cc
 CFLAGS = -Wall -Wextra -Werror
 
-SRCDIR = .
 SOURCES = main.c \
 			user_route/dir_manager.c \
 			commands_built/ft_echo.c \
 			commands_built/ft_env.c \
 			commands_built/ft_pwd.c \
+			execute/execution_utils.c \
+			execute/execution_single_command.c \
+			execute/execution_piped.c \
+			execute/execution_piped_utils.c \
+			utils/main_utils.c \
 			utils/envs.c \
 			utils/envs_utils.c \
+			utils/export_utils.c \
 			utils/errors.c \
 			utils/struct_utils.c \
-			pipex/utils.c \
-			pipex/aux.c \
 			signals/signals.c \
 			parser/parser_tokenizer0.c \
 			parser/parser_tokenizer_utils1.c \
 			parser/parser_builtins2.c \
 			parser/parser_parser_args2.c \
-			parser/parser_redirectionsPollitos3.c \
-			parser/parser_redirectionsPollo.c \
+			parser/parser_redirections_Chicken.c \
+			parser/parser_redirections_little_chickens3.c \
 			parser/parser_parser_main4.c \
 			parser/parser_parser_init5.c \
 			parser/parser_expander6.c \
 			parser/parser_expander_utils7.c \
 			parser/free_clean8.c \
+			parser/message_error_main.c \
+			parser/expander_chicken.c \
+			parser/chicken_token.c \
 
 OBJECTS = $(SOURCES:.c=.o)
 

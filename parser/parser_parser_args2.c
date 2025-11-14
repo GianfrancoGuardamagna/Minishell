@@ -6,7 +6,7 @@
 /*   By: axgimene <axgimene@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/08 16:57:41 by axgimene          #+#    #+#             */
-/*   Updated: 2025/11/03 16:45:10 by axgimene         ###   ########.fr       */
+/*   Updated: 2025/11/06 18:26:48 by axgimene         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,6 @@ t_cmd	*create_command(void)
 	if (!cmd)
 		return (NULL);
 	cmd->av = NULL;
-	cmd->ac = 0;
 	cmd->in_fd = STDIN_FILENO;
 	cmd->out_fd = STDOUT_FILENO;
 	cmd->pipe[0] = -1;

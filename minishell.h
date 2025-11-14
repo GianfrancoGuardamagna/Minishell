@@ -75,7 +75,21 @@ void	ft_env(t_shell *shell);
 void	ft_pwd(t_cmd *command);
 
 //execution
-void just_execute_it_man(t_shell *shell);
+void	just_execute_it_man(t_shell *shell);
+void	execute_builtin(t_shell *shell);
+void	execute_pipeline(t_shell *shell);
+
+//execution utils
+void	status_wait(pid_t pid, int status);
+void	fd_checker(t_shell *shell);
+int		create_pipe_if_needed(t_cmd *current, int *pipe_fd);
+void	fd_redirections(int prev_fd, t_cmd	*current, int *pipe_fd);
+void	wait_for_childs(t_shell *shell);
+char	*find_binary(char *command, char **paths);
+
+//Utils main
+void	null_input(char	*cwd, char	*input);
+void	init_signals(void);
 
 //Utils Errors
 void	error_executing\
@@ -85,41 +99,38 @@ void write_error_message(int fd, char *cmd, char *arg, char *msg);
 //Utils Envs
 void	export_variables(t_shell *shell);
 void	unset_variables(t_shell *shell);
-char 	*get_env_value(t_shell *shell, char *var_name);
+char	**get_path_values(char **env, const char *var_name);
+char	*get_env_value(t_shell *shell, char *var_name);
 int		is_valid_var_name(char *name);
 int		find_variable_index(char **env_var, char *var_name, int name_len);
 int		count_env_vars(char **env_var);
 void	del_var(t_shell *shell);
 
+//Utils Export
+char	*create_var_without_value(char *var_assignment, int *name_len);
+char	*create_var_with_value(char *var_assignment, char *equals_pos, char **var_name, int *name_len);
+void	update_env_array(char **env_var, char *new_var, char *var_name, int name_len);
+void	add_or_modify_var(char **env_var, char *var_assignment);
+char	*extract_var_name(char *var_assignment, char *equals_pos);
+
 //signals
 void	sigint_handler(int sig);
-
-//pipex
-//char	**ft_split(const char *s, char c);
-//int		failed_fd(void);
-void	freeing_env(char **env);
-//void	freeing_memory(int *fd, pid_t pid1, pid_t pid2);
-//char	*ft_strjoin(char const *s1, char const *s2);
-//size_t	ft_strlcpy(char *dst, const char *src, size_t size);
-char	*find_binary(char *command, char **paths);
-//char	**get_args(int type, char **argv);
 
 //Struct Utils
 void	init_shell(t_shell *shell, char **envp);
 void	cleanup_shell(t_shell *shell);
 void	check_struct(t_shell *shell);
 
-// Parser Functions prototypes
+// Parser Functions
 // Parser tokenizer
 int	is_metachar(char c);
 t_token_type	get_token_type(char *str);
 t_token	*tokenize(char *input);
-t_cmd	*parse_tokens(t_token **tokens);
+t_cmd	*parse_tokens(t_token *tokens);
 void	expand_variables(t_shell *shell, t_token *tokens);
 char	*expand_string(t_shell *shell, char *str);
 char	*handle_single_quotes(char *str, int *i);
 char	*handle_double_quotes(t_shell *shell, char *str, int *i);
-void	handle_quotes_in_token(char *input, int *i, char *quote);
 char	*extract_word(char *input, int *i);
 char	*extract_metachar(char *input, int *i);
 int		handle_redirection(t_token **tokens, t_cmd *cmd);
@@ -135,6 +146,18 @@ int		handle_append_redirection(char *filename);
 int		handle_output_redirection(char *filename);
 int		handle_input_redirection(char *filename);
 int		handle_heredoc(char *delimiter);
+void	handle_quotes_in_token(char *input, int *i, char *quote);
+void 	free_command_args_and_fds(t_cmd *cmd);
+int		is_redirection_token(t_token_type type);
+int		is_valid_redir_sequence(t_token *token);
+int		setup_pipe_fds(t_cmd *current_cmd, t_cmd *new_cmd);
+int		handle_pipe_token(t_token **current_token, t_cmd **current_cmd);
+int		validate_final_command(t_cmd *current_cmd);
+
+// Signals
+void	setup_signals(void);
+void	handle_sigint(int sig);
+void	handle_sigquit(int sig);
 
 // Utils
 char	*find_executable(char *cmd, char **env);
@@ -142,5 +165,6 @@ void	free_tokens(t_token **tokens);
 void	free_commands(t_cmd **commands);
 char	**copy_env(char **env);
 void	print_error(char *cmd, char *msg);
+
 
 #endif

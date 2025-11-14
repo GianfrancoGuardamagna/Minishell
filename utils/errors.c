@@ -12,6 +12,21 @@
 
 #include "../minishell.h"
 
+static void	freeing_env(char **env)
+{
+	int	i;
+
+	if (!env)
+		return ;
+	i = 0;
+	while (env[i])
+	{
+		free(env[i]);
+		i++;
+	}
+	free(env);
+}
+
 void	error_executing\
 (int site_of_error, char **env, char **cmd_params)
 {
@@ -33,7 +48,6 @@ void	error_executing\
 		exit((perror("execve"), 127));
 }
 
-// Función auxiliar para escribir mensajes de error usando el FD correcto
 void	write_error_message(int fd, char *cmd, char *arg, char *msg)
 {
 	write(fd, "bash: ", 6);
