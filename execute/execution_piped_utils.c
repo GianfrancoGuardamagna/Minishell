@@ -1,5 +1,6 @@
 #include "../minishell.h"
 
+/*
 int	create_pipe_if_needed(t_cmd *current, int *pipe_fd)
 {
 	if (current->next)
@@ -46,11 +47,15 @@ void	wait_for_childs(t_shell *shell)
 	current = shell->commands;
 	while (current)
 	{
-		wait(&status);
-		if (WIFEXITED(status))
-			g_exit_status = WEXITSTATUS(status);
-		else if (WIFSIGNALED(status))
-			g_exit_status = 128 + WTERMSIG(status);
+		if (current->pid > 0)
+		{
+			waitpid(current->pid, &status, 0);
+			if (WIFEXITED(status))
+				g_exit_status = WEXITSTATUS(status);
+			else if (WIFSIGNALED(status))
+				g_exit_status = 128 + WTERMSIG(status);
+		}
 		current = current->next;
 	}
 }
+*/

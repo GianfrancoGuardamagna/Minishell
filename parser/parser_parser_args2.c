@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser_parser_args2.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: axgimene <axgimene@student.42.fr>          +#+  +:+       +#+        */
+/*   By: gguardam <gguardam@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/08 16:57:41 by axgimene          #+#    #+#             */
-/*   Updated: 2025/11/06 18:26:48 by axgimene         ###   ########.fr       */
+/*   Updated: 2025/11/17 17:04:03 by gguardam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,7 @@ t_cmd	*create_command(void)
 	cmd->pipe[0] = -1;
 	cmd->pipe[1] = -1;
 	cmd->is_builtin = 0;
+	cmd->pid = -1;
 	cmd->next = NULL;
 	return (cmd);
 }
