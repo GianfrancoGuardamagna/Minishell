@@ -1,0 +1,509 @@
+# Tests Completos para Minishell - Proyecto 42
+
+## 1. Comandos Básicos y Built-ins
+
+### Echo
+bash 
+echo "Hello World" 
+echo -n "Sin salto de línea" 
+echo -n -n -n "Múltiples -n" FALLA
+echo "Hola" "Mundo"
+echo
+
+
+### PWD
+bash
+pwd
+cd /tmp && pwd
+cd .. && pwd
+
+
+### CD
+bash
+cd /tmp
+cd ..
+cd ~
+cd - FALLA PWD
+cd /nonexistent
+cd
+
+
+### ENV
+bash
+env
+env | grep PATH
+env | wc -l
+
+
+### Export
+bash
+export VAR=valor
+export VAR="valor con espacios"
+export VAR=valor1 VAR2=valor2
+export
+export VAR+=append FALLA
+LOCAL_VAR=tests FALLA
+
+
+### Unset
+bash
+unset VAR
+unset PATH
+unset VAR1 VAR2
+
+
+### Exit
+bash
+exit
+exit 42 FALLA
+exit 300 FALLA
+exit -1 FALLA
+exit hola FALLA
+
+
+---
+
+## 2. Variables de Entorno y $?
+
+### Variables de entorno
+bash
+echo $PATH
+echo $HOME
+echo $USER
+echo $PWD
+echo $OLDPWD
+echo $?
+
+
+### Exit status
+bash
+ls && echo $?
+ls /nonexistent && echo $?
+echo $? $? $?
+false; echo $?
+true; echo $?
+
+
+### Expansión de variables
+bash
+export VAR=hello
+echo $VAR
+echo "$VAR"
+echo '$VAR'
+echo $VAR$VAR
+echo ${VAR}test
+echo $NONEXISTENT
+
+
+---
+
+## 3. Comillas (Quotes)
+
+### Comillas simples
+bash
+echo 'Hello $USER'
+echo 'No expansion: $PATH'
+echo '"dentro de simples"'
+
+
+### Comillas dobles
+bash
+echo "Hello $USER"
+echo "Expansion: $PATH"
+echo "'dentro de dobles'"
+echo "$USER $HOME"
+
+
+### Mixtas
+bash
+echo "Single 'quote' inside double"
+echo 'Double "quote" inside single'
+echo "Test $USER 'no expansion'"
+
+
+---
+
+## 4. Redirecciones
+
+### Output (>)
+bash
+echo "test" > file.txt
+cat file.txt
+ls > output.txt
+> empty.txt
+echo "overwrite" > file.txt
+
+
+### Append (>>)
+bash
+echo "line1" >> file.txt
+echo "line2" >> file.txt
+cat file.txt
+
+
+### Input (<)
+bash
+cat < file.txt
+wc -l < file.txt
+grep "test" < file.txt
+
+
+### Múltiples redirecciones
+bash
+< input.txt cat > output.txt
+echo "test" > file1.txt > file2.txt
+cat < file.txt > output.txt
+
+
+### Redirecciones con errores
+bash
+echo "test" > /root/denied.txt
+cat < nonexistent.txt
+
+
+---
+
+## 5. Heredoc (<<)
+
+### Heredoc básico
+bash
+cat << EOF
+Línea 1
+Línea 2
+EOF
+
+
+### Con expansión
+bash
+cat << EOF
+Usuario: $USER
+Home: $HOME
+EOF
+
+
+### Sin expansión (delimitador entre comillas)
+bash
+cat << 'EOF'
+No expande: $USER
+EOF
+
+
+### Múltiples heredocs
+bash
+cat << EOF << END
+test
+EOF
+another
+END
+
+
+### Heredoc con comandos
+bash
+grep "test" << EOF
+test line
+another line
+test again
+EOF
+
+
+---
+
+## 6. Pipes (|)
+
+### Pipes simples
+bash
+ls | grep ".txt"
+cat file.txt | wc -l > test.txt FALLA
+echo "hello" | cat
+env | grep PATH
+
+
+### Múltiples pipes
+bash
+ls | grep ".c" | wc -l
+cat file.txt | grep "test" | wc -w
+echo "test" | cat | cat | cat
+
+
+### Pipes con redirecciones
+bash
+ls | grep ".txt" > output.txt
+< input.txt cat | grep "test"
+echo "test" | cat > output.txt
+
+
+### Pipes complejos
+bash
+ls -l | grep "^d" | wc -l
+ps aux | grep bash | grep -v grep
+
+
+---
+
+## 7. Señales (Ctrl-C, Ctrl-D, Ctrl-\)
+
+### Ctrl-C durante comando
+bash
+cat
+# (presionar Ctrl-C)
+
+sleep 10
+# (presionar Ctrl-C)
+
+cat << EOF
+# (presionar Ctrl-C sin cerrar)
+
+
+### Ctrl-D
+bash
+# (presionar Ctrl-D en prompt vacío - debe salir)
+
+cat
+# (presionar Ctrl-D - debe terminar cat)
+
+cat << EOF
+# (presionar Ctrl-D)
+
+
+### Ctrl-\ (no debe hacer nada en modo interactivo)
+bash
+# (presionar Ctrl-\ en prompt)
+
+cat
+# (presionar Ctrl-\)
+
+
+---
+
+## 8. Rutas y Ejecutables
+
+### Ruta absoluta
+bash
+/bin/ls
+/bin/echo "test"
+/usr/bin/env
+
+
+### Ruta relativa
+bash
+./minishell
+../test
+./programa
+
+
+### PATH
+bash
+ls
+cat
+grep
+env
+
+
+### Comando no encontrado
+bash
+comandoquenoexiste
+/bin/noexiste
+./noexiste
+
+
+---
+
+## 9. Casos Edge y Errores FALLAs
+
+### Espacios y tabs
+bash
+echo    "múltiples    espacios"
+		echo "tabs"
+  	  ls  	  
+
+
+### Comillas sin cerrar (NO debe interpretar)
+bash
+echo "sin cerrar
+echo 'sin cerrar
+cat < "file
+
+
+### Pipes vacíos
+bash
+|
+| ls
+ls |
+ls | | grep
+
+
+### Redirecciones inválidas
+bash
+>
+<
+>>
+<<
+
+
+### Variables vacías
+bash
+export VAR=
+echo $VAR
+echo "$VAR"
+
+
+### Caracteres especiales no requeridos
+bash
+echo \test
+echo test\;test
+echo test\ntest
+
+
+### Múltiples operadores
+bash
+echo "test" | | cat
+>> << file
+> > output.txt
+
+
+---
+
+## 10. Tests Combinados Complejos
+
+### Todo junto
+bash
+export VAR="Hello"
+echo "$VAR World" | cat > output.txt
+cat < output.txt | grep "Hello"
+
+
+### Pipes + redirecciones + variables
+bash
+ls -la | grep $USER > userfiles.txt
+cat < userfiles.txt | wc -l
+
+
+### Heredoc + pipes + expansión
+bash
+cat << EOF | grep "$USER"
+Current user: $USER
+Home: $HOME
+EOF
+
+
+### Múltiples comandos válidos
+bash
+echo "test1" ; echo "test2"
+cd /tmp ; pwd ; cd - ; pwd
+
+
+### Exit status chain
+bash
+ls && echo "success" || echo "fail"
+ls /nonexistent && echo "success" || echo "fail"
+
+
+---
+
+## 11. Tests de Memoria
+
+### Comandos largos repetitivos
+bash
+echo "a very long string with many words to test memory allocation and management"
+export LONGVAR="very long value to test memory handling in export command with multiple words"
+
+
+### Muchas pipes
+bash
+echo "test" | cat | cat | cat | cat | cat | cat | cat
+
+
+### Muchas redirecciones
+bash
+echo "test" > f1 > f2 > f3 > f4 > f5
+
+
+### History (probar con flechas arriba/abajo)
+bash
+echo "cmd1"
+echo "cmd2"
+# (usar flechas para navegar historial)
+
+
+---
+
+## Recomendaciones para Testing
+
+1. *Compara siempre con bash*: Ejecuta el mismo comando en bash y en tu minishell
+2. *Verifica exit status*: Usa echo $? después de cada comando
+3. *Valgrind*: valgrind --leak-check=full --show-leak-kinds=all ./minishell
+4. *Archivos temporales*: Limpia los archivos de test entre ejecuciones
+5. *Norminette*: Verifica que cumple la norma antes de entregar
+
+---
+
+## Tests Adicionales Importantes
+
+### Permisos
+bash
+chmod 000 file.txt
+cat file.txt
+./file.txt
+chmod 755 file.txt
+
+
+### Directorios
+bash
+cd .
+cd ..
+cd ../..
+cd /
+cd ~
+
+
+### Variables especiales
+bash
+echo $$
+echo $?
+echo $PATH | tr ':' '\n'
+
+
+### Built-ins con argumentos inválidos
+bash
+cd arg1 arg2
+pwd arg1
+env arg1
+exit arg1 arg2
+
+
+### Expansión de variables compleja
+bash
+export A=hello
+export B=world
+echo $A$B
+echo "$A $B"
+echo '$A $B'
+echo $A"$B"
+echo "$A"$B
+
+
+---
+
+## Script de Testing Automatizado
+
+Para crear un script que compare con bash:
+
+bash
+#!/bin/bash
+# test_minishell.sh
+
+echo "Comando de test: $1"
+echo "--- BASH ---"
+bash -c "$1"
+BASH_EXIT=$?
+echo "Exit status bash: $BASH_EXIT"
+
+echo ""
+echo "--- MINISHELL ---"
+echo "$1" | ./minishell
+MINI_EXIT=$?
+echo "Exit status minishell: $MINI_EXIT"
+
+
+Uso: ./test_minishell.sh "echo hello | cat"
+

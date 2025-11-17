@@ -24,10 +24,10 @@ void	just_execute_it_man(t_shell *shell)
 }
 
 //Falta gestionar "export" a secas y modificar los comentarios para que queden en ingles
-void	execute_builtin(t_shell *shell)
+int	execute_builtin(t_shell *shell)
 {
 	if (!shell || !shell->commands || !shell->commands->av || !shell->commands->av[0])
-		return;
+		return (1);
 	if (ft_strncmp(shell->commands->av[0], "cd", 2) == 0)
 		change_directory(shell->commands->av[1]);
 	else if (ft_strncmp(shell->commands->av[0], "pwd", 3) == 0)
@@ -47,4 +47,5 @@ void	execute_builtin(t_shell *shell)
 		export_variables(shell);
 	else if (ft_strncmp(shell->commands->av[0], "unset", 5) == 0)
 		unset_variables(shell);
+	return (0);
 }
