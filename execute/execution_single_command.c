@@ -33,7 +33,12 @@ void	execute_builtin(t_shell *shell)
 	else if (ft_strncmp(shell->commands->av[0], "pwd", 3) == 0)
 		ft_pwd(shell->commands);
 	else if (ft_strncmp(shell->commands->av[0], "exit", 4) == 0)
-		exit(0);
+	{
+		if (shell->commands->av[1])
+			exit(ft_atoi(shell->commands->av[1]));
+		else
+			exit(0);
+	}
 	else if (ft_strncmp(shell->commands->av[0], "env", 3) == 0)
 		ft_env(shell);
 	else if (ft_strncmp(shell->commands->av[0], "echo", 4) == 0)

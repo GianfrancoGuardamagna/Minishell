@@ -3,61 +3,46 @@
 /*                                                        :::      ::::::::   */
 /*   ft_echo.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: gguardam <gguardam@student.42.fr>          +#+  +:+       +#+        */
+/*   By: axgimene <axgimene@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/10 18:35:13 by gguardam          #+#    #+#             */
-/*   Updated: 2025/11/10 18:35:16 by gguardam         ###   ########.fr       */
+/*   Updated: 2025/11/17 18:45:17 by axgimene         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
-static void	there_are_params(t_cmd *command)
+void	ft_echo(t_cmd *cmd)
 {
-	int	i;
-	int	flag;
-	int	j;
+    int		i;
+    int		newline;
+    int		j;
 
-	i = 1;
-	j = 2;
-	flag = 1;
-	while (command->av[i][j])
-	{
-		if (command->av[i][j] != 'n')
-			flag = 0;
-		j++;
-	}
-	if (flag)
-		i += 1;
-	while (command->av[i])
-	{
-		ft_putstr_fd(command->av[i], command->out_fd);
-		if (command->av[i + 1])
-			write(command->out_fd, " ", 1);
-		i++;
-	}
-	if (!flag)
-		write(command->out_fd, "\n", 1);
-}
-
-void	ft_echo(t_cmd *command)
-{
-	int	i;
-
-	i = 1;
-	if (!command->av[i])
-		write(command->out_fd, "\n", 1);
-	else if (command->av[i] && ft_strncmp(command->av[1], "-n", 2) == 0)
-		there_are_params(command);
-	else
-	{
-		while (command->av[i])
-		{
-			write(command->out_fd, command->av[i], ft_strlen(command->av[i]));
-			if (command->av[i + 1])
-				write(command->out_fd, " ", 1);
-			i++;
-		}
-		write(command->out_fd, "\n", 1);
-	}
+    i = 1;
+    newline = 1;
+    while (cmd->av[i])
+    {
+        if (cmd->av[i][0] == '-' && cmd->av[i][1] == 'n')
+        {
+            j = 1;
+            while (cmd->av[i][j] == 'n')
+                j++;
+            if (cmd->av[i][j] == '\0')
+            {
+                newline = 0;
+                i++;
+                continue;
+            }
+        }
+        break;
+    }
+    while (cmd->av[i])
+    {
+        printf("%s", cmd->av[i]);
+        if (cmd->av[i + 1])
+            printf(" ");
+        i++;
+    }
+    if (newline)
+        printf("\n");
 }
