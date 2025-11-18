@@ -56,6 +56,7 @@ typedef struct s_shell
 	t_token		*tokens;
 	t_cmd		*commands;
 	char		**env;
+	char		**local_vars;
 	int			exit_status;
 	int			stdin_copy;
 	int			stdout_copy;
@@ -73,6 +74,8 @@ char	*format_cwd(char *cwd);
 void	ft_echo(t_cmd *command);
 void	ft_env(t_shell *shell);
 void	ft_pwd(t_cmd *command);
+void	update_envs(t_shell *shell);
+void	manage_exit(t_shell *shell);
 
 //execution
 void	just_execute_it_man(t_shell *shell);
