@@ -1,28 +1,29 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_pwd.c                                           :+:      :+:    :+:   */
+/*   ft_strcmp.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: gguardam <gguardam@student.42.fr>          +#+  +:+       +#+        */
+/*   By: axgimene <axgimene@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/11/10 18:35:30 by gguardam          #+#    #+#             */
-/*   Updated: 2025/11/18 16:59:06 by gguardam         ###   ########.fr       */
+/*   Created: 2025/11/18 12:21:49 by axgimene          #+#    #+#             */
+/*   Updated: 2025/11/18 12:48:58 by axgimene         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../minishell.h"
+#include "libft.h"
 
-void	ft_pwd(t_cmd *command)
+int	ft_strcmp(char *s1, char *s2)
 {
-	int		i;
-	char	*cwd;
-
+	int	i;
+	
+	if (ft_strlen(s1) != ft_strlen(s2))
+		return (1);
 	i = 0;
-	cwd = getcwd(NULL, 0);
-	while (cwd[i])
+	while (s1[i] && s2[i])
 	{
-		write(command->out_fd, &cwd[i], 1);
+		if (s1[i] != s2[i])
+			return (1);
 		i++;
 	}
-	write(command->out_fd, "\n", 1);
+	return (0);
 }
