@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: gguardam <marvin@42.fr>                    +#+  +:+       +#+         #
+#    By: axgimene <axgimene@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/05/03 16:26:25 by gguardam          #+#    #+#              #
-#    Updated: 2025/05/12 15:21:14 by gguardam         ###   ########.fr        #
+#    Updated: 2025/11/18 12:24:04 by axgimene         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -34,6 +34,7 @@ SOURCE = ft_atoi.c \
 	 ft_isascii.c \
          ft_memcpy.c \
          ft_strdup.c \
+		 ft_strcmp.c \
          ft_strncmp.c \
          ft_itoa.c \
          ft_putchar_fd.c \

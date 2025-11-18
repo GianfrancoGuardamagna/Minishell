@@ -47,7 +47,6 @@ typedef struct s_cmd
 	int				out_fd;
 	int				pipe[2];
 	int				is_builtin;
-	pid_t			pid;
 	struct s_cmd	*next;
 }	t_cmd;
 
@@ -77,8 +76,8 @@ void	ft_pwd(t_cmd *command);
 
 //execution
 void	just_execute_it_man(t_shell *shell);
-int		execute_builtin(t_shell *shell);
-int		execute_pipeline(t_shell *shell);
+void	execute_builtin(t_shell *shell);
+void	execute_pipeline(t_shell *shell);
 
 //execution utils
 void	status_wait(pid_t pid, int status);

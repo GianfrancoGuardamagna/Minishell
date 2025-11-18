@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   errors.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: gguardam <gguardam@student.42.fr>          +#+  +:+       +#+        */
+/*   By: axgimene <axgimene@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/10 18:37:37 by gguardam          #+#    #+#             */
-/*   Updated: 2025/11/10 19:16:14 by gguardam         ###   ########.fr       */
+/*   Updated: 2025/11/18 11:41:18 by axgimene         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,13 +48,15 @@ void	error_executing\
 		exit((perror("execve"), 127));
 }
 
-void	write_error_message(int fd, char *cmd, char *arg, char *msg)
+void	write_error_message(int fd, char *cmd, char *arg, char *error_msg)
 {
-	write(fd, "bash: ", 6);
-	write(fd, cmd, ft_strlen(cmd));
-	write(fd, ": `", 3);
-	write(fd, arg, ft_strlen(arg));
-	write(fd, "': ", 3);
-	write(fd, msg, ft_strlen(msg));
-	write(fd, "\n", 1);
+    ft_putstr_fd(cmd, fd);
+    ft_putstr_fd(": ", fd);
+    if (arg && arg[0] != '\0')
+    {
+        ft_putstr_fd(arg, fd);
+        ft_putstr_fd(": ", fd);
+    }
+    ft_putstr_fd(error_msg, fd);
+    ft_putstr_fd("\n", fd);
 }
