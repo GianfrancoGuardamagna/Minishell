@@ -76,6 +76,7 @@ void	ft_env(t_shell *shell);
 void	ft_pwd(t_cmd *command);
 void	update_envs(t_shell *shell);
 void	manage_exit(t_shell *shell);
+void	ft_export_env(t_shell *shell);
 
 //execution
 void	just_execute_it_man(t_shell *shell);
@@ -89,6 +90,7 @@ int		create_pipe_if_needed(t_cmd *current, int *pipe_fd);
 void	fd_redirections(int prev_fd, t_cmd	*current, int *pipe_fd);
 void	wait_for_childs(t_shell *shell);
 char	*find_binary(char *command, char **paths);
+int		got_path(t_shell *shell);
 
 //Utils main
 void	null_input(char	*cwd, char	*input);

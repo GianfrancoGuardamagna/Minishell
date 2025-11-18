@@ -1,6 +1,6 @@
 #include "../minishell.h"
 
-static int	got_path(t_shell *shell)
+int	got_path(t_shell *shell)
 {
 	int	i;
 
@@ -64,7 +64,7 @@ void	execute_builtin(t_shell *shell)
 		export_variables(shell);
 	else if (!ft_strcmp(shell->commands->av[0], "unset"))
 		unset_variables(shell);
-	else
+	else //Tiene que contemplar LOCAL_VAR=localVar
 		write_error_message(STDERR_FILENO, shell->commands->av[0], "", "command not found");
 }
 

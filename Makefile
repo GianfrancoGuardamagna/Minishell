@@ -6,7 +6,7 @@
 #    By: gguardam <gguardam@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/06/06 12:00:00 by gguardam          #+#    #+#              #
-#    Updated: 2025/11/18 16:54:43 by gguardam         ###   ########.fr        #
+#    Updated: 2025/11/18 18:28:16 by gguardam         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -22,6 +22,7 @@ SOURCES = main.c \
 			commands_built/ft_cd.c \
 			commands_built/ft_pwd.c \
 			commands_built/ft_exit.c \
+			commands_built/ft_export.c \
 			execute/execution_utils.c \
 			execute/execution_single_command.c \
 			execute/execution_piped.c \

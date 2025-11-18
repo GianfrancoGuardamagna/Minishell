@@ -6,7 +6,7 @@
 /*   By: gguardam <gguardam@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/10 18:37:33 by gguardam          #+#    #+#             */
-/*   Updated: 2025/11/10 19:35:58 by gguardam         ###   ########.fr       */
+/*   Updated: 2025/11/18 18:31:34 by gguardam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,6 @@ static void	process_export_arg(t_shell *shell, char *arg)
 		free(var_name);
 }
 
-// TODO: Implementar mostrar variables en formato export
 void	export_variables(t_shell *shell)
 {
 	int	i;
@@ -42,7 +41,7 @@ void	export_variables(t_shell *shell)
 		return ;
 	if (!shell->commands->av[1])
 	{
-		ft_env(shell);
+		ft_export_env(shell);
 		return ;
 	}
 	i = 1;
