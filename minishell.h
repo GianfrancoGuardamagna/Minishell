@@ -62,8 +62,6 @@ typedef struct s_shell
 	int			stdout_copy;
 }	t_shell;
 
-
-// Variable global para el código de salida
 extern int g_exit_status;
 
 //dir_manager
@@ -105,11 +103,11 @@ void write_error_message(int fd, char *cmd, char *arg, char *msg);
 void	export_variables(t_shell *shell);
 void	unset_variables(t_shell *shell);
 char	**get_path_values(char **env, const char *var_name);
-char	*get_env_value(t_shell *shell, char *var_name);
 int		is_valid_var_name(char *name);
 int		find_variable_index(char **env_var, char *var_name, int name_len);
 int		count_env_vars(char **env_var);
 void	del_var(t_shell *shell);
+void	set_local_var(t_shell *shell);
 
 //Utils Export
 char	*create_var_without_value(char *var_assignment, int *name_len);

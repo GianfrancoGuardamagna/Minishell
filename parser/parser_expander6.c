@@ -12,7 +12,7 @@
 
 #include "../minishell.h"
 
-char	*get_env_value(t_shell *shell, char *var_name)
+static char	*get_env_value(t_shell *shell, char *var_name)
 {
 	int		i;
 	int		len;
@@ -26,6 +26,14 @@ char	*get_env_value(t_shell *shell, char *var_name)
 		if (ft_strncmp(shell->env[i], var_name, len) == 0
 			&& shell->env[i][len] == '=')
 			return (ft_strdup(&shell->env[i][len + 1]));
+		i++;
+	}
+	i = 0;
+	while (shell->local_vars[i])
+	{
+		if (ft_strncmp(shell->local_vars[i], var_name, len) == 0
+			&& shell->local_vars[i][len] == '=')
+			return (ft_strdup(&shell->local_vars[i][len + 1]));
 		i++;
 	}
 	return (ft_strdup(""));
