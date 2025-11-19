@@ -23,6 +23,7 @@ SOURCES = main.c \
 			commands_built/ft_pwd.c \
 			commands_built/ft_exit.c \
 			commands_built/ft_export.c \
+			commands_built/ft_local_var.c \
 			execute/execution_utils.c \
 			execute/execution_single_command.c \
 			execute/execution_piped.c \

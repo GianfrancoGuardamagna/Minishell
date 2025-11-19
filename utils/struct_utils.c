@@ -17,6 +17,7 @@ void	init_shell(t_shell *shell, char **envp)
 	if (!shell)
 		return ;
 	shell->env = envp;
+	shell->local_vars = NULL;
 	shell->tokens = NULL;
 	shell->commands = NULL;
 	shell->exit_status = 0;

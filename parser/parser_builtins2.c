@@ -40,6 +40,11 @@ void	set_builtin_flag(t_cmd *cmd)
 			cmd->is_builtin = 1;
 			return ;
 		}
+		else if(ft_strchr(cmd->av[0], '='))
+		{
+			cmd->is_builtin = 1;
+			return ;
+		}
 		i++;
 	}
 	cmd->is_builtin = 0;

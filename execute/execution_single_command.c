@@ -64,7 +64,9 @@ void	execute_builtin(t_shell *shell)
 		export_variables(shell);
 	else if (!ft_strcmp(shell->commands->av[0], "unset"))
 		unset_variables(shell);
-	else //Tiene que contemplar LOCAL_VAR=localVar
+	else if (ft_strchr(shell->commands->av[0], '='))
+		set_local_var(shell);
+	else
 		write_error_message(STDERR_FILENO, shell->commands->av[0], "", "command not found");
 }
 
