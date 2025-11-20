@@ -30,7 +30,7 @@ int	find_variable_index(char **env_var, char *var_name, int name_len)
 	while (env_var[i])
 	{
 		if (ft_strncmp(env_var[i], var_name, name_len) == 0 && \
-env_var[i][name_len] == '=')
+(env_var[i][name_len] == '=' || env_var[i][name_len] == '\0'))
 			return (i);
 		i++;
 	}

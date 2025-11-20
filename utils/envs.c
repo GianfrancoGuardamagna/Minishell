@@ -17,15 +17,18 @@ static void	process_export_arg(t_shell *shell, char *arg)
 	char	*equals_pos;
 	char	*var_name;
 
+	var_name = NULL;
 	equals_pos = ft_strchr(arg, '=');
-	var_name = extract_var_name(arg, equals_pos);
-	if (!var_name)
-		return ;
-	if (is_valid_var_name(var_name))
+	if(equals_pos)
 	{
-		if (equals_pos)
-			add_or_modify_var(shell->env, arg);
+		var_name = extract_var_name(arg, equals_pos);
+		if (!var_name)
+			return ;
 	}
+	if(is_valid_var_name(var_name))
+		add_or_modify_var(shell->env, arg);
+	else if(is_valid_var_name(arg))
+		add_or_modify_var(shell->env, arg);
 	else
 		write_error_message(shell->commands->out_fd, "export", arg, \
 "not a valid identifier");

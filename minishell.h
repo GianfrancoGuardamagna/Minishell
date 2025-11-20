@@ -110,7 +110,7 @@ void	del_var(t_shell *shell);
 void	set_local_var(t_shell *shell);
 
 //Utils Export
-char	*create_var_without_value(char *var_assignment, int *name_len);
+//char	*create_var_without_value(char *var_assignment, int *name_len);
 char	*create_var_with_value(char *var_assignment, char *equals_pos, char **var_name, int *name_len);
 void	update_env_array(char **env_var, char *new_var, char *var_name, int name_len);
 void	add_or_modify_var(char **env_var, char *var_assignment);

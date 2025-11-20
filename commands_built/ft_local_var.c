@@ -76,7 +76,7 @@ void	set_local_var(t_shell *shell)
 				inspect_local_vars(&shell->local_vars, shell->commands->av[i]);
 			else
 				write_error_message(shell->commands->out_fd, "export", shell->commands->av[i], \
-		"not a valid identifier");
+"not a valid identifier");
 			if (var_name != shell->commands->av[i])
 				free(var_name);
 		}
