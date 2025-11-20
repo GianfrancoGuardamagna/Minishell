@@ -91,8 +91,9 @@ char	*find_binary(char *command, char **paths);
 int		got_path(t_shell *shell);
 
 //Utils main
-void	null_input(char	*cwd, char	*input);
+void	null_input(void);  // ✅ Sin parámetros
 void	init_signals(void);
+int	check_unclosed_quotes(char *input);
 
 //Utils Errors
 void	error_executing\
@@ -121,14 +122,16 @@ void	sigint_handler(int sig);
 
 //Struct Utils
 void	init_shell(t_shell *shell, char **envp);
+void	cleanup_command_fds(t_cmd *cmd);
 void	cleanup_shell(t_shell *shell);
 void	check_struct(t_shell *shell);
 
 // Parser Functions
 // Parser tokenizer
-int	is_metachar(char c);
+int		is_metachar(char c);
 t_token_type	get_token_type(char *str);
 t_token	*tokenize(char *input);
+int		check_unclosed_quotes(char *input);
 t_cmd	*parse_tokens(t_token *tokens);
 void	expand_variables(t_shell *shell, t_token *tokens);
 char	*expand_string(t_shell *shell, char *str);
@@ -169,5 +172,8 @@ void	free_commands(t_cmd **commands);
 char	**copy_env(char **env);
 void	print_error(char *cmd, char *msg);
 
+// Cleanup functions
+void	cleanup_shell(t_shell *shell);
+void	free_shell_after_execution(t_shell *shell);  // ✅ AÑADE AQUÍ
 
 #endif

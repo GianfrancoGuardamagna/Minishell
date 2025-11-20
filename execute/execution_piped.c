@@ -29,24 +29,51 @@ static void	execute_builtin_in_pipeline(t_shell *shell, t_cmd *command)
 
 static void	im_a_child(int prev_fd, t_cmd *current, int *pipe_fd, t_shell *shell)
 {
-	char	**path_env;
-	char	*bin_path;
+    char	**path_env;
+    char	*bin_path;
 
-	fd_redirections(prev_fd, current, pipe_fd);
-	if (current->is_builtin)
-	{
-		execute_builtin_in_pipeline(shell, current);
-		exit(0);
-	}
-	path_env = get_path_values(shell->env, "PATH");
-	bin_path = find_binary(current->av[0], path_env);
-	if (!bin_path)
-	{
-		write_error_message(STDERR_FILENO, current->av[0], "", "command not found");
-		exit(127);
-	}
-	if (execve(bin_path, current->av, shell->env) == -1)
-		error_executing(2, shell->env, current->av);
+    fd_redirections(prev_fd, current, pipe_fd);
+    if (current->is_builtin)
+    {
+        execute_builtin_in_pipeline(shell, current);
+        exit(0);
+    }
+    path_env = get_path_values(shell->env, "PATH");
+    bin_path = find_binary(current->av[0], path_env);
+    if (!bin_path)
+    {
+        write_error_message(STDERR_FILENO, current->av[0], "", "command not found");
+        // ✅ Libera SOLO path_env (que SÍ es malloc)
+        if (path_env)
+        {
+            int i = 0;
+            while (path_env[i])
+                free(path_env[i++]);
+            free(path_env);
+        }
+        exit(127);
+    }
+    if (execve(bin_path, current->av, shell->env) == -1)
+    {
+        write_error_message(STDERR_FILENO, current->av[0], "", "command not found");
+        // ✅ Libera SOLO path_env
+        if (path_env)
+        {
+            int i = 0;
+            while (path_env[i])
+                free(path_env[i++]);
+            free(path_env);
+        }
+        exit(127);
+    }
+    // ✅ Libera antes de execve
+    if (path_env)
+    {
+        int i = 0;
+        while (path_env[i])
+            free(path_env[i++]);
+        free(path_env);
+    }
 }
 
 static void	handle_parent_process(int *prev_fd, t_cmd *current, int *pipe_fd)
@@ -60,6 +87,34 @@ static void	handle_parent_process(int *prev_fd, t_cmd *current, int *pipe_fd)
 	}
 }
 
+void	fd_redirections(int prev_fd, t_cmd *current, int *pipe_fd)
+{
+    // Input: archivo anterior o stdin
+    if (prev_fd != STDIN_FILENO)
+    {
+        dup2(prev_fd, STDIN_FILENO);
+        close(prev_fd);
+    }
+    
+    // Output: siguiente pipe O redirección
+    if (current->out_fd != STDOUT_FILENO && current->out_fd > 0)
+    {
+        // ✅ PRIMERO: Redirección (>)
+        dup2(current->out_fd, STDOUT_FILENO);
+        close(current->out_fd);
+    }
+    else if (current->next)
+    {
+        // ✅ SEGUNDO: Pipe al siguiente
+        dup2(pipe_fd[1], STDOUT_FILENO);
+        close(pipe_fd[1]);
+    }
+    
+    // Cierra siempre los pipes que no usamos
+    close(pipe_fd[0]);
+    close(pipe_fd[1]);
+}
+
 void	execute_pipeline(t_shell *shell)
 {
 	t_cmd	*current;
@@ -71,7 +126,8 @@ void	execute_pipeline(t_shell *shell)
 	prev_fd = STDIN_FILENO;
 	while (current)
 	{
-		if (create_pipe_if_needed(current, pipe_fd))
+		// ✅ Solo crea pipe SI hay siguiente comando
+		if (current->next && create_pipe_if_needed(current, pipe_fd))
 			return ;
 		pid = fork();
 		if (pid == -1)

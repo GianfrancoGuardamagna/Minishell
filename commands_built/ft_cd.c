@@ -10,7 +10,10 @@ static void	is_pwd(t_shell *shell, int i)
 		return;
 	new_pwd = ft_strjoin("PWD=", current_dir);
 	if (new_pwd)
+	{
+		free(shell->env[i]);  // ✅ Libera el valor anterior
 		shell->env[i] = new_pwd;
+	}
 	free(current_dir);
 }
 
@@ -20,7 +23,10 @@ static void	is_oldpwd(t_shell *shell, int i, char	*old_pwd)
 
 	new_oldpwd = ft_strjoin("OLDPWD=", old_pwd);
 	if (new_oldpwd)
+	{
+		free(shell->env[i]);  // ✅ Libera el valor anterior
 		shell->env[i] = new_oldpwd;
+	}
 }
 
 void	update_envs(t_shell *shell)

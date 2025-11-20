@@ -33,10 +33,22 @@ void	just_execute_it_man(t_shell *shell)
 		if (!bin_path)
 		{
 			write_error_message(STDERR_FILENO, shell->commands->av[0], "", "command not found");
+			// ✅ Libera path_env ANTES de salir
+			int i = 0;
+			while(path_env && path_env[i])
+				free(path_env[i++]);
+			free(path_env);
 			exit(127);
 		}
+		// ✅ También libera aquí ANTES de execve (execve no retorna, pero por limpieza)
 		if (execve(bin_path, shell->commands->av, shell->env) == -1)
+		{
+			int i = 0;
+			while(path_env && path_env[i])
+				free(path_env[i++]);
+			free(path_env);
 			error_executing(2, shell->env, shell->commands->av);
+		}
 	}
 	else if (pid > 0)
 		status_wait(pid, status);

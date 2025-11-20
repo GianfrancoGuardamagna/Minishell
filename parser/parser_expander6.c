@@ -6,7 +6,7 @@
 /*   By: axgimene <axgimene@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/29 15:17:13 by axgimene          #+#    #+#             */
-/*   Updated: 2025/11/11 16:33:28 by axgimene         ###   ########.fr       */
+/*   Updated: 2025/11/20 19:04:55 by axgimene         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,11 +17,13 @@ static char	*get_env_value(t_shell *shell, char *var_name)
 	int		i;
 	int		len;
 
+	if (!var_name)
+		return (ft_strdup(""));
 	if (ft_strncmp(var_name, "?", 1) == 0)
 		return (ft_itoa(shell->exit_status));
 	i = 0;
 	len = ft_strlen(var_name);
-	while (shell->env[i])
+	while (shell->env && shell->env[i])
 	{
 		if (ft_strncmp(shell->env[i], var_name, len) == 0
 			&& shell->env[i][len] == '=')
@@ -29,7 +31,7 @@ static char	*get_env_value(t_shell *shell, char *var_name)
 		i++;
 	}
 	i = 0;
-	while (shell->local_vars[i])
+	while (shell->local_vars && shell->local_vars[i])
 	{
 		if (ft_strncmp(shell->local_vars[i], var_name, len) == 0
 			&& shell->local_vars[i][len] == '=')
@@ -63,18 +65,16 @@ char	*expand_dollar(t_shell *shell, char *str, int *i)
 {
 	char	*var_name;
 	char	*var_value;
-	char	*result;
 
 	(*i)++;
 	if (!str[*i] || is_dollar_terminator(str[*i]))
 		return (ft_strdup("$"));
 	var_name = extract_variable_name(str, i);
 	if (!var_name)
-		return (NULL);
+		return (ft_strdup(""));
 	var_value = get_env_value(shell, var_name);
 	free(var_name);
-	result = var_value;
-	return (result);
+	return (var_value);
 }
 
 char	*handle_single_quotes(char *str, int *i)

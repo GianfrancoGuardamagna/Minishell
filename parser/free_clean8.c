@@ -6,7 +6,7 @@
 /*   By: axgimene <axgimene@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/31 17:06:33 by axgimene          #+#    #+#             */
-/*   Updated: 2025/11/11 16:30:11 by axgimene         ###   ########.fr       */
+/*   Updated: 2025/11/20 18:59:53 by axgimene         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,34 +29,6 @@ void	free_tokens(t_token **tokens)
 		current = temp;
 	}
 	*tokens = NULL;
-}
-
-void	free_commands(t_cmd **commands)
-{
-	t_cmd	*current;
-	t_cmd	*temp;
-	int		i;
-
-	if (!commands || !*commands)
-		return ;
-	current = *commands;
-	while (current)
-	{
-		temp = current->next;
-		if (current->av)
-		{
-			i = 0;
-			while (current->av[i])
-			{
-				free(current->av[i]);
-				i++;
-			}
-			free(current->av);
-		}
-		free(current);
-		current = temp;
-	}
-	*commands = NULL;
 }
 
 void	cleanup_command_fds(t_cmd *cmd)
@@ -83,4 +55,33 @@ void	cleanup_command_fds(t_cmd *cmd)
 		close(cmd->pipe[1]);
 		cmd->pipe[1] = -1;
 	}
+}
+
+void	free_commands(t_cmd **commands)
+{
+    t_cmd	*current;
+    t_cmd	*temp;
+    int		i;
+
+    if (!commands || !*commands)
+        return ;
+    current = *commands;
+    while (current)
+    {
+        temp = current->next;
+        cleanup_command_fds(current);  // ✅ Cierra file descriptors
+        if (current->av)
+        {
+            i = 0;
+            while (current->av[i])  // ✅ Libera cada string
+            {
+                free(current->av[i]);
+                i++;
+            }
+            free(current->av);  // ✅ Libera el array
+        }
+        free(current);  // ✅ Libera la estructura
+        current = temp;
+    }
+    *commands = NULL;
 }

@@ -5,12 +5,12 @@ void	fd_checker(t_shell *shell)
 	if (shell->commands->out_fd != STDOUT_FILENO && shell->commands->out_fd > 0)
 	{
 		dup2(shell->commands->out_fd, STDOUT_FILENO);
-		close(shell->commands->out_fd);
+		close(shell->commands->out_fd);  // ✅ Cierra DESPUÉS de dup2
 	}
 	if (shell->commands->in_fd != STDIN_FILENO && shell->commands->in_fd > 0)
 	{
 		dup2(shell->commands->in_fd, STDIN_FILENO);
-		close(shell->commands->in_fd);
+		close(shell->commands->in_fd);  // ✅ Cierra DESPUÉS de dup2
 	}
 }
 

@@ -3,26 +3,23 @@
 /*                                                        :::      ::::::::   */
 /*   ft_pwd.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: gguardam <gguardam@student.42.fr>          +#+  +:+       +#+        */
+/*   By: axgimene <axgimene@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/10 18:35:30 by gguardam          #+#    #+#             */
-/*   Updated: 2025/11/18 16:59:06 by gguardam         ###   ########.fr       */
+/*   Updated: 2025/11/20 16:59:28 by axgimene         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
-void	ft_pwd(t_cmd *command)
+void	ft_pwd(t_cmd *command __attribute__((unused)))
 {
-	int		i;
 	char	*cwd;
 
-	i = 0;
 	cwd = getcwd(NULL, 0);
-	while (cwd[i])
+	if (cwd)
 	{
-		write(command->out_fd, &cwd[i], 1);
-		i++;
+		printf("%s\n", cwd);
+		free(cwd);
 	}
-	write(command->out_fd, "\n", 1);
 }

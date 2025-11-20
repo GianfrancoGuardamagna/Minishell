@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser_parser_args2.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: gguardam <gguardam@student.42.fr>          +#+  +:+       +#+        */
+/*   By: axgimene <axgimene@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/08 16:57:41 by axgimene          #+#    #+#             */
-/*   Updated: 2025/11/18 18:34:09 by gguardam         ###   ########.fr       */
+/*   Updated: 2025/11/20 18:59:37 by axgimene         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,27 +47,38 @@ void	copy_old_args(t_cmd *cmd, char **new_args, int count)
 
 void	add_arg_to_command(t_cmd *cmd, char *arg)
 {
-	int		count;
-	char	**new_args;
-	char	*dup_arg;
+    int		count;
+    char	**new_args;
+    char	*dup_arg;
+    int		i;
 
-	if (!cmd || !arg)
-		return ;
-	count = 0;
-	if (cmd->av != NULL)
-		while (cmd->av[count])
-			count++;
-	new_args = malloc(sizeof(char *) * (count + 2));
-	if (!new_args)
-		return ;
-	dup_arg = ft_strdup(arg);
-	if (!dup_arg)
-	{
-		free(new_args);
-		return ;
-	}
-	copy_old_args(cmd, new_args, count);
-	new_args[count] = dup_arg;
-	new_args[count + 1] = NULL;
-	cmd->av = new_args;
+    if (!cmd || !arg)
+        return ;
+    count = 0;
+    if (cmd->av != NULL)
+        while (cmd->av[count])
+            count++;
+    new_args = malloc(sizeof(char *) * (count + 2));
+    if (!new_args)
+        return ;
+    dup_arg = ft_strdup(arg);
+    if (!dup_arg)
+    {
+        free(new_args);
+        return ;
+    }
+    // ✅ Copia los strings (no libera el array aún)
+    i = 0;
+    if (cmd->av != NULL)
+    {
+        while (i < count)
+        {
+            new_args[i] = cmd->av[i];
+            i++;
+        }
+        free(cmd->av);  // ← Solo libera el array, no los strings
+    }
+    new_args[count] = dup_arg;
+    new_args[count + 1] = NULL;
+    cmd->av = new_args;
 }
