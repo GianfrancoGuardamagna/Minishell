@@ -97,3 +97,28 @@ char	*extract_var_name(char *var_assignment, char *equals_pos)
 		var_name = var_assignment;
 	return (var_name);
 }
+
+char	*extract_var_value(char *var_assignment)
+{
+	char	*var_value;
+	int		value_len;
+	int		name_len;
+	int		i;
+
+	i = 0;
+	while(var_assignment[i] != '=')
+		i++;
+	name_len = i;
+	value_len = ft_strlen(var_assignment) - name_len - 1;  // -1 to exclude '='
+	var_value = malloc(value_len + 1);
+	if (!var_value)
+		return (NULL);
+	i = 0;
+	while(i < value_len)
+	{
+		var_value[i] = var_assignment[name_len + 1 + i];
+		i++;
+	}
+	var_value[i] = '\0';
+	return (var_value);
+}

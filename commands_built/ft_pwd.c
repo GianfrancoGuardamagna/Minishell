@@ -12,17 +12,16 @@
 
 #include "../minishell.h"
 
-void	ft_pwd(t_cmd *command)
+int	ft_pwd(t_cmd *command)
 {
-	int		i;
 	char	*cwd;
 
-	i = 0;
 	cwd = getcwd(NULL, 0);
-	while (cwd[i])
+	if (cwd)
 	{
-		write(command->out_fd, &cwd[i], 1);
-		i++;
+		ft_putstr_fd(cwd, command->out_fd);
+		ft_putchar_fd('\n', command->out_fd);
+		return (0);
 	}
-	write(command->out_fd, "\n", 1);
+	return (1);
 }

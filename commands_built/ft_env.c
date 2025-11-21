@@ -12,7 +12,7 @@
 
 #include "../minishell.h"
 
-void	ft_env(t_shell *shell)
+int	ft_env(t_shell *shell)
 {
 	int	i;
 
@@ -26,4 +26,5 @@ void	ft_env(t_shell *shell)
 		}
 		i++;
 	}
+	return (0);
 }

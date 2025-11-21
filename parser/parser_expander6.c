@@ -17,24 +17,32 @@ static char	*get_env_value(t_shell *shell, char *var_name)
 	int		i;
 	int		len;
 
+	if (!shell || !var_name)
+		return (ft_strdup(""));
 	if (ft_strncmp(var_name, "?", 1) == 0)
 		return (ft_itoa(shell->exit_status));
 	i = 0;
 	len = ft_strlen(var_name);
-	while (shell->env[i])
+	if (shell->env)
 	{
-		if (ft_strncmp(shell->env[i], var_name, len) == 0
-			&& shell->env[i][len] == '=')
-			return (ft_strdup(&shell->env[i][len + 1]));
-		i++;
+		while (shell->env[i])
+		{
+			if (ft_strncmp(shell->env[i], var_name, len) == 0
+				&& shell->env[i][len] == '=')
+				return (ft_strdup(&shell->env[i][len + 1]));
+			i++;
+		}
 	}
 	i = 0;
-	while (shell->local_vars[i])
+	if (shell->local_vars)
 	{
-		if (ft_strncmp(shell->local_vars[i], var_name, len) == 0
-			&& shell->local_vars[i][len] == '=')
-			return (ft_strdup(&shell->local_vars[i][len + 1]));
-		i++;
+		while (shell->local_vars[i])
+		{
+			if (ft_strncmp(shell->local_vars[i], var_name, len) == 0
+				&& shell->local_vars[i][len] == '=')
+				return (ft_strdup(&shell->local_vars[i][len + 1]));
+			i++;
+		}
 	}
 	return (ft_strdup(""));
 }

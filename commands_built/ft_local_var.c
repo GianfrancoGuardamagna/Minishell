@@ -53,7 +53,7 @@ static void inspect_local_vars(char ***local_env, char *arg)
 		free(name_var);
 }
 
-void	set_local_var(t_shell *shell)
+int	set_local_var(t_shell *shell)
 {
 	int		i;
 	int		j;
@@ -71,7 +71,7 @@ void	set_local_var(t_shell *shell)
 			equals_pos = ft_strchr(shell->commands->av[i], '=');
 			var_name = extract_var_name(shell->commands->av[i], equals_pos);
 			if (!var_name)
-				return ;
+				return (1);
 			if (is_valid_var_name(var_name))
 				inspect_local_vars(&shell->local_vars, shell->commands->av[i]);
 			else
@@ -81,7 +81,8 @@ void	set_local_var(t_shell *shell)
 				free(var_name);
 		}
 		else
-			write_error_message(STDERR_FILENO, shell->commands->av[0], "", "command not found");
+			return (write_error_message(STDERR_FILENO, shell->commands->av[0], "", "command not found"));
 		i++;
 	}
+	return (0);
 }
