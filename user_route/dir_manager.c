@@ -8,7 +8,7 @@ char	*get_home_shortcut(char *cwd)
     size_t	cwd_len;
 
     if (!cwd)
-        return (ft_strdup(cwd));
+        return (ft_strdup("Minishell$ "));
     
     home = getenv("HOME");
     if (!home)

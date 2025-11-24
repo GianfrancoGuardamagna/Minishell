@@ -31,34 +31,35 @@ void	cleanup_shell(t_shell *shell)
     if (!shell)
         return ;
     
-    // ✅ Libera el prompt
+    // ✅ Libera el prompt (seguro si se llama múltiples veces)
     if (shell->prompt)
     {
         free(shell->prompt);
         shell->prompt = NULL;
     }
     
-    // ✅ Libera tokens
+    // ✅ Libera tokens (seguro si se llama múltiples veces)
     if (shell->tokens)
     {
         free_tokens(&shell->tokens);
         shell->tokens = NULL;
     }
     
-    // ✅ Libera commands
+    // ✅ Libera commands (seguro si se llama múltiples veces)
     if (shell->commands)
     {
         free_commands(&shell->commands);
         shell->commands = NULL;
     }
     
-    // ✅ Libera local_vars si existen
+    // ✅ Libera local_vars si existen (seguro si se llama múltiples veces)
     if (shell->local_vars)
     {
         int i = 0;
         while (shell->local_vars[i])
         {
             free(shell->local_vars[i]);
+            shell->local_vars[i] = NULL;
             i++;
         }
         free(shell->local_vars);

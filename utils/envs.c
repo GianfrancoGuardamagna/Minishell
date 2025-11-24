@@ -83,26 +83,49 @@ static int	append_arg(t_shell *shell, char *arg)
 	char	*mod_env_name;
 	char	*equal_pos;
 	char	*env_var;
+	char	*var_value;
 
 	i = 0;
 	equal_pos = ft_strchr(arg, '=');
 	mod_env_name = extract_var_name(arg, equal_pos);
+	if (!mod_env_name)
+		return (1);
 	mod_env_name[ft_strlen(mod_env_name) - 1] = '\0';
 	while(shell->env[i])
 	{
 		equal_pos = ft_strchr(shell->env[i], '=');
 		env_var = extract_var_name(shell->env[i], equal_pos);
 		if(!ft_strcmp(env_var, mod_env_name))
+		{
+			if (env_var != shell->env[i])
+				free(env_var);
 			break ;
+		}
+		if (env_var != shell->env[i])
+			free(env_var);
 		i++;
 	}
 	equal_pos = ft_strchr(arg, '=');
 	if (!equal_pos)
+	{
+		free(mod_env_name);
 		return (1);
-	mod_env = ft_strjoin(shell->env[i], extract_var_value(arg));
+	}
+	var_value = extract_var_value(arg);
+	if (!var_value)
+	{
+		free(mod_env_name);
+		return (1);
+	}
+	mod_env = ft_strjoin(shell->env[i], var_value);
+	free(var_value);
 	if(!mod_env)
+	{
+		free(mod_env_name);
 		return (1);
+	}
 	shell->env[i] = mod_env;
+	free(mod_env_name);
 	return (0);
 }
 

@@ -30,7 +30,7 @@ static char	*get_env_value(t_shell *shell, char *var_name)
 			return (ft_strdup(shell->env[i] + len + 1));
 		i++;
 	}
-	return (NULL);
+	return (ft_strdup(""));
 }
 
 static char	*extract_variable_name(char *str, int *i)
@@ -66,6 +66,8 @@ char	*expand_dollar(t_shell *shell, char *str, int *i)
 		return (ft_strdup(""));
 	var_value = get_env_value(shell, var_name);
 	free(var_name);
+	if (!var_value)
+		return (ft_strdup(""));
 	return (var_value);
 }
 

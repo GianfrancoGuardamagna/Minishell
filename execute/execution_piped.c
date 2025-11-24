@@ -109,6 +109,7 @@ static int	execute_child_process(t_shell *shell, t_cmd *cmd, int prev_pipe_out, 
 	}
 	if (execve(bin_path, cmd->av, shell->env) == -1)
 	{
+		free(bin_path);
 		int i = 0;
 		while(path_env && path_env[i])
 			free(path_env[i++]);
@@ -217,6 +218,13 @@ int	execute_pipeline(t_shell *shell, t_cmd *commands)
 		pids[i] = fork_and_execute(shell, current, prev_pipe_out, pipe_fd);
 		if (pids[i] == -1)
 		{
+			if (prev_pipe_out > 2)
+				close(prev_pipe_out);
+			if (current->next)
+			{
+				close(pipe_fd[0]);
+				close(pipe_fd[1]);
+			}
 			cleanup_pipeline(pids);
 			return (1);
 		}

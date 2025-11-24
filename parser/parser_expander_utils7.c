@@ -59,7 +59,7 @@ void	expand_variables(t_shell *shell, t_token *tokens)
     current = tokens;
     while (current)
     {
-        if (current->type == T_WORD)
+        if (current->type == T_WORD && current->value)
         {
             // Solo expande si es necesario
             if (requires_expansion(current->value))
@@ -70,6 +70,8 @@ void	expand_variables(t_shell *shell, t_token *tokens)
                     free(current->value);
                     current->value = expanded;
                 }
+                // ✅ Si expand_string falla, mantenemos el valor original
+                // (no es un error crítico, solo no se expande)
             }
         }
         current = current->next;

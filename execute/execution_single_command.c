@@ -50,6 +50,7 @@ void	just_execute_it_man(t_shell *shell)
 		}
 		if (execve(bin_path, shell->commands->av, shell->env) == -1)
 		{
+			free(bin_path);
 			int i = 0;
 			while(path_env && path_env[i])
 				free(path_env[i++]);

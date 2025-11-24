@@ -14,34 +14,11 @@
 
 extern t_shell *g_shell;
 
-static void	freeing_env(char **env)
-{
-    int	i;
-
-    if (!env)
-        return ;
-    i = 0;
-    while (env[i])
-    {
-        free(env[i]);
-        i++;
-    }
-    free(env);
-}
-
 void	error_executing\
 (int site_of_error, char **env, char **cmd_params)
 {
-    int	i;
-
-    i = 0;
-    freeing_env(env);
-    while (cmd_params[i])
-    {
-        free (cmd_params[i]);
-        i++;
-    }
-    free (cmd_params);
+    (void)env;
+    (void)cmd_params;
     if (site_of_error == 0)
         exit((perror("command not found"), 127));
     else if (site_of_error == 1)
@@ -92,8 +69,8 @@ void	null_input(void)
             g_shell->commands = NULL;
         }
         
-        // ❌ NO LLAMES cleanup_shell() aquí
-        // porque main.c ya lo hará al salir
+        // ✅ Llama a cleanup_shell para liberar local_vars también
+        cleanup_shell(g_shell);
     }
     
     // ✅ Libera readline history

@@ -16,48 +16,70 @@ static char	*append_char_to_result(char *result, char c)
 {
 	char	*temp;
 	char	buffer[2];
+	char	*new_result;
 
 	buffer[0] = c;
 	buffer[1] = '\0';
 	temp = result;
-	result = ft_strjoin(result, buffer);
-	free(temp);
-	return (result);
+	new_result = ft_strjoin(result, buffer);
+	if (!new_result)
+	{
+		free(temp);
+		return (NULL);
+	}
+	return (new_result);
 }
 
 static char	*append_expansion_to_result(char *result, char *expanded)
 {
 	char	*temp;
+	char	*new_result;
 
+	if (!expanded)
+		return (result);
 	temp = result;
-	result = ft_strjoin(result, expanded);
+	new_result = ft_strjoin(result, expanded);
 	free(temp);
 	free(expanded);
-	return (result);
+	if (!new_result)
+		return (NULL);
+	return (new_result);
 }
 
 static char	*process_double_quote_content(t_shell *shell, char *str, int *i)
 {
 	char	*result;
 	char	*expanded;
+	char	*temp;
 
 	result = ft_strdup("");
+	if (!result)
+		return (NULL);
 	while (str[*i] && str[*i] != '"')
 	{
 		if (str[*i] == '\'')
 		{
-			result = append_char_to_result(result, '\'');
+			temp = append_char_to_result(result, '\'');
+			if (!temp)
+				return (result);
+			result = temp;
 			(*i)++;
 		}
 		else if (str[*i] == '$' && str[*i + 1]
 			&& !is_dollar_terminator(str[*i + 1]))
 		{
 			expanded = expand_dollar(shell, str, i);
-			result = append_expansion_to_result(result, expanded);
+			temp = append_expansion_to_result(result, expanded);
+			if (!temp)
+				return (result);
+			result = temp;
 		}
 		else
 		{
-			result = append_char_to_result(result, str[*i]);
+			temp = append_char_to_result(result, str[*i]);
+			if (!temp)
+				return (result);
+			result = temp;
 			(*i)++;
 		}
 	}

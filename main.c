@@ -3,6 +3,31 @@
 int g_exit_status = 0;
 t_shell *g_shell = NULL;
 
+// ✅ Función de limpieza automática al salir
+static void	cleanup_on_exit(void)
+{
+	if (g_shell)
+	{
+		if (g_shell->prompt)
+		{
+			free(g_shell->prompt);
+			g_shell->prompt = NULL;
+		}
+		if (g_shell->tokens)
+		{
+			free_tokens(&g_shell->tokens);
+			g_shell->tokens = NULL;
+		}
+		if (g_shell->commands)
+		{
+			free_commands(&g_shell->commands);
+			g_shell->commands = NULL;
+		}
+		cleanup_shell(g_shell);
+	}
+	rl_clear_history();
+}
+
 void	free_shell_after_execution(t_shell *shell)
 {
     if (!shell)
@@ -72,6 +97,7 @@ static void	process_input(t_shell	*shell, char *input)
     }
     add_history(input);
     
+    // ✅ Libera cualquier memoria previa antes de procesar nuevo input
     free_shell_after_execution(shell);
     
     shell->tokens = tokenize(input);
@@ -82,12 +108,9 @@ static void	process_input(t_shell	*shell, char *input)
         if (shell->commands)
         {
             evaluate_struct(shell);
-            free_shell_after_execution(shell);
         }
-        else
-        {
-            free_shell_after_execution(shell);
-        }
+        // ✅ Siempre libera después de ejecutar, incluso si hay error
+        free_shell_after_execution(shell);
     }
     free(input);
 }
@@ -103,6 +126,8 @@ int	main(int argc, char **argv, char **envp)
     g_shell = &shell;
     init_shell(&shell, envp);
     init_signals();
+    // ✅ Registra función de limpieza automática
+    atexit(cleanup_on_exit);
     while (1)
     {
         // ✅ LIBERA EL PROMPT ANTERIOR ANTES DE REASIGNAR
@@ -120,12 +145,24 @@ int	main(int argc, char **argv, char **envp)
         input = readline(shell.prompt);
         
         if (!input)
+        {
+            // ✅ Libera el prompt antes de salir
+            if (shell.prompt)
+            {
+                free(shell.prompt);
+                shell.prompt = NULL;
+            }
             null_input();
+        }
         if (input && *input)
             process_input(&shell, input);
         else
+        {
             free(input);
+            input = NULL;
+        }
     }
+    // ✅ Esta línea nunca se alcanza, pero por seguridad
     cleanup_shell(&shell);
     return (0);
 }
