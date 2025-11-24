@@ -68,6 +68,7 @@ extern int g_exit_status;
 //dir_manager
 int		change_directory(char *path);
 char	*format_cwd(char *cwd);
+char	*get_home_shortcut(char *cwd);  // ✅ AÑADE ESTA LÍNEA
 
 //commands
 int		ft_echo(t_cmd *command);

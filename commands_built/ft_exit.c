@@ -34,11 +34,30 @@ void	manage_exit(t_shell *shell)
         else
             exit_code = ft_atoi(shell->commands->av[1]);
     }
-    // ✅ Libera shell global antes de salir
+    
+    // ✅ LIBERA COMPLETAMENTE ANTES DE SALIR
     if (g_shell)
     {
+        if (g_shell->tokens)
+        {
+            free_tokens(&g_shell->tokens);
+            g_shell->tokens = NULL;
+        }
+        if (g_shell->commands)
+        {
+            free_commands(&g_shell->commands);
+            g_shell->commands = NULL;
+        }
+        if (g_shell->prompt)
+        {
+            free(g_shell->prompt);
+            g_shell->prompt = NULL;
+        }
         cleanup_shell(g_shell);
-        free(g_shell);
     }
+    
+    // ✅ Libera readline history
+    rl_clear_history();
+    
     exit(exit_code);
 }

@@ -6,7 +6,7 @@
 /*   By: axgimene <axgimene@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/08 12:29:11 by axgimene          #+#    #+#             */
-/*   Updated: 2025/11/20 19:26:12 by axgimene         ###   ########.fr       */
+/*   Updated: 2025/11/24 20:08:19 by axgimene         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,7 +61,7 @@ void	process_token(char *input, int *i, t_token **head)
     new_token = create_token(type, value);
     if (!new_token)
     {
-        free(value);  // ✅ Libera value si create_token falla
+        free(value);  // ✅ LIBERA si create_token falla
         return ;
     }
     add_token_back(head, new_token);

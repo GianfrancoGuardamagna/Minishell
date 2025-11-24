@@ -1,5 +1,42 @@
 #include "../minishell.h"
 
+char	*get_home_shortcut(char *cwd)
+{
+    char	*home;
+    char	*result;
+    size_t	home_len;
+    size_t	cwd_len;
+
+    if (!cwd)
+        return (ft_strdup(cwd));
+    
+    home = getenv("HOME");
+    if (!home)
+        return (ft_strdup(cwd));
+    
+    home_len = ft_strlen(home);
+    cwd_len = ft_strlen(cwd);
+    
+    // ✅ Si el cwd empieza con HOME, reemplazarlo con ~
+    if (ft_strncmp(cwd, home, home_len) == 0)
+    {
+        if (cwd[home_len] == '\0')
+            return (ft_strdup("~"));
+        else if (cwd[home_len] == '/')
+        {
+            result = malloc(cwd_len - home_len + 2);
+            if (!result)
+                return (ft_strdup(cwd));
+            result[0] = '~';
+            ft_strlcpy(result + 1, cwd + home_len, cwd_len - home_len + 1);
+            return (result);
+        }
+    }
+    
+    // ✅ Si no es HOME, retorna el cwd sin cambios
+    return (ft_strdup(cwd));
+}
+
 int	change_directory(char *path)
 {
 	char	*expanded_path;
@@ -71,39 +108,26 @@ int	change_directory(char *path)
 
 char	*format_cwd(char *cwd)
 {
-	char	*processed_cwd;
-	char	*result;
-	size_t	len;
-	char	*home;
+    char	*processed_cwd;
+    char	*result;
+    size_t	len;
 
-	home = ft_strjoin("/home/", getenv("USER"));
-	if (!home) // ✅ Valida si ft_strjoin falló
-		return (ft_strdup("Minishell$ "));
-
-	if (ft_strnstr(cwd, home, ft_strlen(home)))
-	{
-		if (ft_strlen(cwd) == ft_strlen(home)) // Compara longitudes
-			processed_cwd = ft_strdup("~");
-		else
-			processed_cwd = ft_strjoin("~", cwd + ft_strlen(home));
-	}
-	else
-		processed_cwd = ft_strdup(cwd);
-	
-	free(home); // ✅ Libera 'home' tan pronto como ya no se necesite
-
-	if (!processed_cwd)
-		return (ft_strdup("Minishell$ "));
-	
-	len = ft_strlen(processed_cwd) + 3;
-	result = malloc(len);
-	if (!result)
-	{
-		free(processed_cwd);
-		return (ft_strdup("Minishell$ "));
-	}
-	ft_strlcpy(result, processed_cwd, len);
-	ft_strlcat(result, "$ ", len);
-	free(processed_cwd);
-	return (result);
+    if (!cwd)
+        return (ft_strdup("Minishell$ "));
+    
+    processed_cwd = get_home_shortcut(cwd);
+    if (!processed_cwd)
+        return (ft_strdup("Minishell$ "));
+    
+    len = ft_strlen(processed_cwd) + 3;
+    result = malloc(len);
+    if (!result)
+    {
+        free(processed_cwd);
+        return (ft_strdup("Minishell$ "));
+    }
+    ft_strlcpy(result, processed_cwd, len);
+    ft_strlcat(result, "$ ", len);
+    free(processed_cwd);
+    return (result);
 }

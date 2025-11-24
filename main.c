@@ -71,15 +71,24 @@ static void	process_input(t_shell	*shell, char *input)
         return ;
     }
     add_history(input);
+    
+    free_shell_after_execution(shell);
+    
     shell->tokens = tokenize(input);
     if (shell->tokens)
     {
         expand_variables(shell, shell->tokens);
         shell->commands = parse_tokens(shell->tokens);
         if (shell->commands)
+        {
             evaluate_struct(shell);
+            free_shell_after_execution(shell);
+        }
+        else
+        {
+            free_shell_after_execution(shell);
+        }
     }
-    free_shell_after_execution(shell);
     free(input);
 }
 
@@ -87,21 +96,28 @@ int	main(int argc, char **argv, char **envp)
 {
     char	*input;
     t_shell	shell;
-    char    cwd_buffer[1024]; // Buffer para el directorio actual
+    char    cwd_buffer[1024];
 
     (void)argc;
     (void)argv;
+    g_shell = &shell;
     init_shell(&shell, envp);
     init_signals();
     while (1)
     {
+        // ✅ LIBERA EL PROMPT ANTERIOR ANTES DE REASIGNAR
+        if (shell.prompt)
+        {
+            free(shell.prompt);
+            shell.prompt = NULL;
+        }
+        
         if (getcwd(cwd_buffer, sizeof(cwd_buffer)) != NULL)
             shell.prompt = format_cwd(cwd_buffer);
         else
             shell.prompt = ft_strdup("Minishell$ ");
         
         input = readline(shell.prompt);
-        free(shell.prompt); // ✅ Libera el prompt después de usarlo
         
         if (!input)
             null_input();
