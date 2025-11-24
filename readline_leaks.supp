@@ -1,0 +1,86 @@
+# Archivo de supresión de Valgrind para leaks de readline
+# Uso: valgrind --suppressions=readline_leaks.supp --leak-check=full ./minishell
+
+{
+   readline_leak_1
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   ...
+   fun:readline
+}
+
+{
+   readline_leak_2
+   Memcheck:Leak
+   match-leak-kinds: definite
+   ...
+   fun:readline
+}
+
+{
+   readline_leak_3
+   Memcheck:Leak
+   match-leak-kinds: indirect
+   ...
+   fun:readline
+}
+
+{
+   readline_history_leak
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   ...
+   fun:add_history
+}
+
+{
+   readline_completion_leak
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   ...
+   fun:rl_*
+}
+
+{
+   readline_tgetstr_leak
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   ...
+   fun:tgetstr
+}
+
+{
+   readline_termcap_leak
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   ...
+   fun:*termcap*
+}
+
+{
+   readline_ncurses_leak
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   ...
+   obj:*/libncurses*
+}
+
+{
+   readline_libc_leak
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   ...
+   fun:*alloc
+   ...
+   fun:readline
+}
+
+{
+   readline_dl_leak
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   ...
+   fun:*dl*
+   ...
+   fun:readline
+}

@@ -72,6 +72,7 @@ int	change_directory(char *path)
 char	*format_cwd(char *cwd)
 {
 	char	*processed_cwd;
+	char	*result;
 	size_t	len;
 	char	*home;
 
@@ -86,8 +87,21 @@ char	*format_cwd(char *cwd)
 	else
 		processed_cwd = ft_strdup(cwd);
 	if (!processed_cwd)
-		return ("Minishell$ ");
+	{
+		free(home);
+		return (ft_strdup("Minishell$ "));
+	}
 	len = ft_strlen(processed_cwd) + 3;
-	ft_strlcat(processed_cwd, "$ ", len);
-	return (processed_cwd);
+	result = malloc(len);
+	if (!result)
+	{
+		free(processed_cwd);
+		free(home);
+		return (ft_strdup("Minishell$ "));
+	}
+	ft_strlcpy(result, processed_cwd, len);
+	ft_strlcat(result, "$ ", len);
+	free(processed_cwd);
+	free(home);
+	return (result);
 }
