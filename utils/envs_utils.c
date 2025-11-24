@@ -30,7 +30,7 @@ int	find_variable_index(char **env_var, char *var_name, int name_len)
 	while (env_var[i])
 	{
 		if (ft_strncmp(env_var[i], var_name, name_len) == 0 && \
-env_var[i][name_len] == '=')
+(env_var[i][name_len] == '=' || env_var[i][name_len] == '\0'))
 			return (i);
 		i++;
 	}
@@ -53,6 +53,25 @@ int	is_valid_var_name(char *name)
 		i++;
 	}
 	return (1);
+}
+
+char	**get_path_values(char **env, const char *var_name)
+{
+	int		i;
+	int		var_len;
+
+	if (!env || !var_name)
+		return (NULL);
+	var_len = ft_strlen(var_name);
+	i = 0;
+	while (env[i])
+	{
+		if (ft_strncmp(env[i], var_name, var_len) == 0 \
+&& env[i][var_len] == '=')
+			return (ft_split((env[i] + var_len + 1), ':'));
+		i++;
+	}
+	return (NULL);
 }
 
 void	del_var(t_shell *shell)
@@ -81,23 +100,4 @@ void	del_var(t_shell *shell)
 		}
 		i++;
 	}
-}
-
-char	**get_path_values(char **env, const char *var_name)
-{
-	int		i;
-	int		var_len;
-
-	if (!env || !var_name)
-		return (NULL);
-	var_len = ft_strlen(var_name);
-	i = 0;
-	while (env[i])
-	{
-		if (ft_strncmp(env[i], var_name, var_len) == 0 \
-&& env[i][var_len] == '=')
-			return (ft_split((env[i] + var_len + 1), ':'));
-		i++;
-	}
-	return (NULL);
 }

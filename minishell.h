@@ -69,9 +69,9 @@ int		change_directory(char *path);
 char	*format_cwd(char *cwd);
 
 //commands
-void	ft_echo(t_cmd *command);
-void	ft_env(t_shell *shell);
-void	ft_pwd(t_cmd *command);
+int		ft_echo(t_cmd *command);
+int		ft_env(t_shell *shell);
+int		ft_pwd(t_cmd *command);
 void	update_envs(t_shell *shell);
 void	manage_exit(t_shell *shell);
 void	ft_export_env(t_shell *shell);
@@ -79,7 +79,8 @@ void	ft_export_env(t_shell *shell);
 //execution
 void	just_execute_it_man(t_shell *shell);
 void	execute_builtin(t_shell *shell);
-void	execute_pipeline(t_shell *shell);
+//void	execute_pipeline(t_shell *shell);
+int		execute_pipeline(t_shell *shell, t_cmd *commands);
 
 //execution utils
 void	status_wait(pid_t pid, int status);
@@ -98,24 +99,26 @@ int	check_unclosed_quotes(char *input);
 //Utils Errors
 void	error_executing\
 (int site_of_error, char **env, char **cmd_params);
-void write_error_message(int fd, char *cmd, char *arg, char *msg);
+int	write_error_message(int fd, char *cmd, char *arg, char *msg);
 
 //Utils Envs
-void	export_variables(t_shell *shell);
-void	unset_variables(t_shell *shell);
+int		export_variables(t_shell *shell);
+int		unset_variables(t_shell *shell);
 char	**get_path_values(char **env, const char *var_name);
 int		is_valid_var_name(char *name);
 int		find_variable_index(char **env_var, char *var_name, int name_len);
 int		count_env_vars(char **env_var);
 void	del_var(t_shell *shell);
-void	set_local_var(t_shell *shell);
+int		free_memory(char *modified_arg, char *var_name, char *var_value);
+int		set_local_var(t_shell *shell);
 
 //Utils Export
-char	*create_var_without_value(char *var_assignment, int *name_len);
+//char	*create_var_without_value(char *var_assignment, int *name_len);
 char	*create_var_with_value(char *var_assignment, char *equals_pos, char **var_name, int *name_len);
 void	update_env_array(char **env_var, char *new_var, char *var_name, int name_len);
 void	add_or_modify_var(char **env_var, char *var_assignment);
 char	*extract_var_name(char *var_assignment, char *equals_pos);
+char	*extract_var_value(char *var_assignment);
 
 //signals
 void	sigint_handler(int sig);

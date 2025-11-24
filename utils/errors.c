@@ -48,15 +48,16 @@ void	error_executing\
 		exit((perror("execve"), 127));
 }
 
-void	write_error_message(int fd, char *cmd, char *arg, char *error_msg)
+int	write_error_message(int fd, char *cmd, char *arg, char *error_msg)
 {
-    ft_putstr_fd(cmd, fd);
-    ft_putstr_fd(": ", fd);
-    if (arg && arg[0] != '\0')
-    {
-        ft_putstr_fd(arg, fd);
-        ft_putstr_fd(": ", fd);
-    }
-    ft_putstr_fd(error_msg, fd);
-    ft_putstr_fd("\n", fd);
+	ft_putstr_fd(cmd, fd);
+	ft_putstr_fd(": ", fd);
+	if (arg && arg[0] != '\0')
+	{
+		ft_putstr_fd(arg, fd);
+		ft_putstr_fd(": ", fd);
+	}
+	ft_putstr_fd(error_msg, fd);
+	ft_putstr_fd("\n", fd);
+	return (127);
 }

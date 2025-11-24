@@ -65,21 +65,21 @@ void	execute_builtin(t_shell *shell)
 			update_envs(shell);
 	}
 	else if (!ft_strcmp(shell->commands->av[0], "pwd"))
-		ft_pwd(shell->commands);
+		shell->exit_status = ft_pwd(shell->commands);
 	else if (!ft_strcmp(shell->commands->av[0], "exit"))
 		manage_exit(shell);
 	else if (!ft_strcmp(shell->commands->av[0], "env") && got_path(shell))
-		ft_env(shell);
+		shell->exit_status = ft_env(shell);
 	else if (!ft_strcmp(shell->commands->av[0], "echo"))
-		ft_echo(shell->commands);
+		shell->exit_status = ft_echo(shell->commands);
 	else if (!ft_strcmp(shell->commands->av[0], "export"))
-		export_variables(shell);
+		shell->exit_status = export_variables(shell);
 	else if (!ft_strcmp(shell->commands->av[0], "unset"))
-		unset_variables(shell);
+		shell->exit_status = unset_variables(shell);
 	else if (ft_strchr(shell->commands->av[0], '='))
-		set_local_var(shell);
+		shell->exit_status = set_local_var(shell);
 	else
-		write_error_message(STDERR_FILENO, shell->commands->av[0], "", "command not found");
+		shell->exit_status = write_error_message(STDERR_FILENO, shell->commands->av[0], "", "command not found");
 }
 
 void	execute_command(t_shell *shell)

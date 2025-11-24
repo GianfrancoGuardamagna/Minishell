@@ -53,7 +53,7 @@ static void inspect_local_vars(char ***local_env, char *arg)
 		free(name_var);
 }
 
-void	set_local_var(t_shell *shell)
+int	set_local_var(t_shell *shell)
 {
 	int		i;
 	int		j;
@@ -71,17 +71,18 @@ void	set_local_var(t_shell *shell)
 			equals_pos = ft_strchr(shell->commands->av[i], '=');
 			var_name = extract_var_name(shell->commands->av[i], equals_pos);
 			if (!var_name)
-				return ;
+				return (1);
 			if (is_valid_var_name(var_name))
 				inspect_local_vars(&shell->local_vars, shell->commands->av[i]);
 			else
 				write_error_message(shell->commands->out_fd, "export", shell->commands->av[i], \
-		"not a valid identifier");
+"not a valid identifier");
 			if (var_name != shell->commands->av[i])
 				free(var_name);
 		}
 		else
-			write_error_message(STDERR_FILENO, shell->commands->av[0], "", "command not found");
+			return (write_error_message(STDERR_FILENO, shell->commands->av[0], "", "command not found"));
 		i++;
 	}
+	return (0);
 }

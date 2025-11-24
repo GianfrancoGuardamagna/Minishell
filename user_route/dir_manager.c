@@ -87,13 +87,20 @@ char	*format_cwd(char *cwd)
 	else
 		processed_cwd = ft_strdup(cwd);
 	if (!processed_cwd)
-		return ("Minishell$ ");
+	{
+		free(home);
+		return (ft_strdup("Minishell$ "));
+	}
 	len = ft_strlen(processed_cwd) + 3;
-	result = malloc(len + 1);
+	result = malloc(len);
 	if (!result)
-		return ("Minishell$ ");
-	ft_strlcpy(result, processed_cwd, len + 1);
-	ft_strlcat(result, "$ ", len + 1);
+	{
+		free(processed_cwd);
+		free(home);
+		return (ft_strdup("Minishell$ "));
+	}
+	ft_strlcpy(result, processed_cwd, len);
+	ft_strlcat(result, "$ ", len);
 	free(processed_cwd);
 	free(home);
 	return (result);
