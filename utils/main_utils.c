@@ -1,11 +1,9 @@
 #include "../minishell.h"
 
-void	null_input(char	*cwd, char	*input)
+void	null_input(void)
 {
-	printf("exit\n");
-	free(cwd);
-	free(input);
-	exit(0);
+    printf("exit\n");
+    exit(0);
 }
 void	init_signals(void)
 {
