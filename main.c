@@ -14,7 +14,7 @@ static void	evaluate_struct(t_shell *shell)
 			just_execute_it_man(shell);
 	}
 	else if (shell->commands->next)
-		execute_pipeline(shell);
+		execute_pipeline(shell, shell->commands);
 }
 
 static void	process_input(t_shell	*shell, char *input)

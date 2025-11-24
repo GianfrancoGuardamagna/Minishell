@@ -79,7 +79,8 @@ void	ft_export_env(t_shell *shell);
 //execution
 void	just_execute_it_man(t_shell *shell);
 void	execute_builtin(t_shell *shell);
-void	execute_pipeline(t_shell *shell);
+//void	execute_pipeline(t_shell *shell);
+int		execute_pipeline(t_shell *shell, t_cmd *commands);
 
 //execution utils
 void	status_wait(pid_t pid, int status);
