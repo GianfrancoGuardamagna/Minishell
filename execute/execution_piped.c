@@ -21,7 +21,7 @@ static int	execute_builtin_cd_pwd_exit(t_shell *shell, t_cmd *cmd)
 
 static int	execute_builtin_env_echo_export(t_shell *shell, t_cmd *cmd)
 {
-	if (!ft_strcmp(cmd->av[0], "env") && got_path(shell))
+	if (!ft_strcmp(cmd->av[0], "env"))  // ✅ SIN la condición got_path
 		return (ft_env(shell));
 	if (!ft_strcmp(cmd->av[0], "echo"))
 		return (ft_echo(cmd));
@@ -91,11 +91,30 @@ static int	execute_child_process(t_shell *shell, t_cmd *cmd, int prev_pipe_out, 
 	bin_path = find_binary(cmd->av[0], path_env);
 	if (!bin_path)
 	{
-		write_error_message(STDERR_FILENO, cmd->av[0], "", "command not found");
+		// ✅ Valida si PATH existe
+		if (!got_path(shell))
+		{
+			write_error_message(STDERR_FILENO, cmd->av[0], "", "No such file or directory");
+		}
+		else
+		{
+			write_error_message(STDERR_FILENO, cmd->av[0], "", "command not found");
+		}
+		// ✅ Libera path_env
+		int i = 0;
+		while(path_env && path_env[i])
+			free(path_env[i++]);
+		free(path_env);
 		exit(127);
 	}
-	execve(bin_path, cmd->av, shell->env);
-	perror(cmd->av[0]);
+	if (execve(bin_path, cmd->av, shell->env) == -1)
+	{
+		int i = 0;
+		while(path_env && path_env[i])
+			free(path_env[i++]);
+		free(path_env);
+		error_executing(2, shell->env, cmd->av);
+	}
 	exit(127);
 }
 

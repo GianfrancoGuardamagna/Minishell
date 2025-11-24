@@ -6,7 +6,7 @@
 /*   By: axgimene <axgimene@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/29 15:17:13 by axgimene          #+#    #+#             */
-/*   Updated: 2025/11/20 19:04:55 by axgimene         ###   ########.fr       */
+/*   Updated: 2025/11/24 18:58:32 by axgimene         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,28 +23,14 @@ static char	*get_env_value(t_shell *shell, char *var_name)
 		return (ft_itoa(shell->exit_status));
 	i = 0;
 	len = ft_strlen(var_name);
-	if (shell->env)
+	while (shell->env[i])
 	{
-		while (shell->env[i])
-		{
-			if (ft_strncmp(shell->env[i], var_name, len) == 0
-				&& shell->env[i][len] == '=')
-				return (ft_strdup(&shell->env[i][len + 1]));
-			i++;
-		}
+		if (ft_strncmp(shell->env[i], var_name, len) == 0
+			&& shell->env[i][len] == '=')
+			return (ft_strdup(shell->env[i] + len + 1));
+		i++;
 	}
-	i = 0;
-	if (shell->local_vars)
-	{
-		while (shell->local_vars[i])
-		{
-			if (ft_strncmp(shell->local_vars[i], var_name, len) == 0
-				&& shell->local_vars[i][len] == '=')
-				return (ft_strdup(&shell->local_vars[i][len + 1]));
-			i++;
-		}
-	}
-	return (ft_strdup(""));
+	return (NULL);
 }
 
 static char	*extract_variable_name(char *str, int *i)

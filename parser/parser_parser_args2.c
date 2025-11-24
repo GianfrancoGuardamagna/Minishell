@@ -6,7 +6,7 @@
 /*   By: axgimene <axgimene@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/08 16:57:41 by axgimene          #+#    #+#             */
-/*   Updated: 2025/11/20 18:59:37 by axgimene         ###   ########.fr       */
+/*   Updated: 2025/11/24 18:48:42 by axgimene         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,7 @@ t_cmd	*create_command(void)
 	if (!cmd)
 		return (NULL);
 	cmd->av = NULL;
+	cmd->ac = 0;  // ✅ Inicializa ac
 	cmd->in_fd = STDIN_FILENO;
 	cmd->out_fd = STDOUT_FILENO;
 	cmd->pipe[0] = -1;
@@ -47,38 +48,33 @@ void	copy_old_args(t_cmd *cmd, char **new_args, int count)
 
 void	add_arg_to_command(t_cmd *cmd, char *arg)
 {
-    int		count;
-    char	**new_args;
-    char	*dup_arg;
+    char	**new_av;
     int		i;
 
     if (!cmd || !arg)
-        return ;
-    count = 0;
-    if (cmd->av != NULL)
-        while (cmd->av[count])
-            count++;
-    new_args = malloc(sizeof(char *) * (count + 2));
-    if (!new_args)
-        return ;
-    dup_arg = ft_strdup(arg);
-    if (!dup_arg)
-    {
-        free(new_args);
-        return ;
-    }
-    // ✅ Copia los strings (no libera el array aún)
+        return;
+    
+    new_av = malloc(sizeof(char *) * (cmd->ac + 2));
+    if (!new_av)
+        return;
+    
     i = 0;
-    if (cmd->av != NULL)
+    while (i < cmd->ac)
     {
-        while (i < count)
-        {
-            new_args[i] = cmd->av[i];
-            i++;
-        }
-        free(cmd->av);  // ← Solo libera el array, no los strings
+        new_av[i] = cmd->av[i];
+        i++;
     }
-    new_args[count] = dup_arg;
-    new_args[count + 1] = NULL;
-    cmd->av = new_args;
+    new_av[i] = ft_strdup(arg);
+    if (!new_av[i])  // ✅ Verifica si ft_strdup falló
+    {
+        free(new_av);
+        return;
+    }
+    new_av[i + 1] = NULL;
+    
+    if (cmd->av)
+        free(cmd->av);
+    
+    cmd->av = new_av;
+    cmd->ac++;
 }

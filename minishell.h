@@ -53,13 +53,14 @@ typedef struct s_cmd
 // Main shell structure
 typedef struct s_shell
 {
-	t_token		*tokens;
-	t_cmd		*commands;
-	char		**env;
-	char		**local_vars;
-	int			exit_status;
-	int			stdin_copy;
-	int			stdout_copy;
+    t_token		*tokens;
+    t_cmd		*commands;
+    char		**env;
+    char		**local_vars;
+    char		*prompt; // ✅ AÑADE ESTA LÍNEA
+    int			exit_status;
+    int			stdin_copy;
+    int			stdout_copy;
 }	t_shell;
 
 extern int g_exit_status;

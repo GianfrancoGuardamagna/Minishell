@@ -6,7 +6,7 @@
 /*   By: axgimene <axgimene@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 15:08:19 by gguardam          #+#    #+#             */
-/*   Updated: 2025/11/20 19:12:38 by axgimene         ###   ########.fr       */
+/*   Updated: 2025/11/24 18:27:30 by axgimene         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ char	*ft_strjoin(char const *s1, char const *s2)
 	total_len = fst_len + ft_strlen(s2) + 1;
 	new_str = malloc(total_len);
 	if (!new_str)
-		return (NULL);
+		return (NULL);  // ✅ Si malloc falla, retorna NULL sin memory leak
 	i = 0;
 	while (i < fst_len)
 	{

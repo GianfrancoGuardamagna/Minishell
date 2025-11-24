@@ -1,8 +1,23 @@
 #include "minishell.h"
 
 int g_exit_status = 0;
+t_shell *g_shell = NULL;
 
-void	free_shell_after_execution(t_shell *shell);
+void	free_shell_after_execution(t_shell *shell)
+{
+    if (!shell)
+        return ;
+    if (shell->tokens)
+    {
+        free_tokens(&shell->tokens);
+        shell->tokens = NULL;
+    }
+    if (shell->commands)
+    {
+        free_commands(&shell->commands);
+        shell->commands = NULL;
+    }
+}
 
 static void	evaluate_struct(t_shell *shell)
 {
@@ -16,7 +31,7 @@ static void	evaluate_struct(t_shell *shell)
             just_execute_it_man(shell);
     }
     else if (shell->commands->next)
-        execute_pipeline(shell);
+        execute_pipeline(shell, shell->commands);
 }
 
 int	check_unclosed_quotes(char *input)
@@ -50,13 +65,11 @@ int	check_unclosed_quotes(char *input)
 
 static void	process_input(t_shell	*shell, char *input)
 {
-    // ✅ VALIDA PRIMERO
     if (check_unclosed_quotes(input))
     {
         free(input);
         return ;
     }
-    
     add_history(input);
     shell->tokens = tokenize(input);
     if (shell->tokens)
@@ -64,54 +77,39 @@ static void	process_input(t_shell	*shell, char *input)
         expand_variables(shell, shell->tokens);
         shell->commands = parse_tokens(shell->tokens);
         if (shell->commands)
-        {
             evaluate_struct(shell);
-            free_shell_after_execution(shell);
-        }
     }
+    free_shell_after_execution(shell);
     free(input);
 }
 
-void	free_shell_after_execution(t_shell *shell)
+int	main(int argc, char **argv, char **envp)
 {
-    if (shell->tokens)
-    {
-        free_tokens(&shell->tokens);
-        shell->tokens = NULL;
-    }
-    if (shell->commands)
-    {
-        free_commands(&shell->commands);
-        shell->commands = NULL;
-    }
-}
-
-int	main(int argc __attribute__((unused)), char **argv __attribute__((unused)), char **envp)
-{
-    t_shell	*shell;
     char	*input;
-    char	*cwd;
-    char	*prompt;
+    t_shell	shell;
+    char    cwd_buffer[1024]; // Buffer para el directorio actual
 
-    shell = malloc(sizeof(t_shell));  // ✅ Asigna memoria
-    if (!shell)
-        return (1);
-    init_shell(shell, envp);  // ✅ Pasa 2 parámetros
+    (void)argc;
+    (void)argv;
+    init_shell(&shell, envp);
     init_signals();
     while (1)
     {
-        cwd = getcwd(NULL, 0);
-        if (!cwd)
-            cwd = ft_strdup("~");
-        prompt = format_cwd(cwd);
-        input = readline(prompt);
-        free(prompt);
-        free(cwd);
+        if (getcwd(cwd_buffer, sizeof(cwd_buffer)) != NULL)
+            shell.prompt = format_cwd(cwd_buffer);
+        else
+            shell.prompt = ft_strdup("Minishell$ ");
+        
+        input = readline(shell.prompt);
+        free(shell.prompt); // ✅ Libera el prompt después de usarlo
+        
         if (!input)
             null_input();
-        process_input(shell, input);
+        if (input && *input)
+            process_input(&shell, input);
+        else
+            free(input);
     }
-    cleanup_shell(shell);
-    free(shell);
+    cleanup_shell(&shell);
     return (0);
 }

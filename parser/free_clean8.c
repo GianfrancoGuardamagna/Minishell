@@ -6,7 +6,7 @@
 /*   By: axgimene <axgimene@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/31 17:06:33 by axgimene          #+#    #+#             */
-/*   Updated: 2025/11/20 18:59:53 by axgimene         ###   ########.fr       */
+/*   Updated: 2025/11/24 19:05:28 by axgimene         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,21 +14,22 @@
 
 void	free_tokens(t_token **tokens)
 {
-	t_token	*current;
-	t_token	*temp;
+    t_token	*current;
+    t_token	*next;
 
-	if (!tokens || !*tokens)
-		return ;
-	current = *tokens;
-	while (current)
-	{
-		temp = current->next;
-		if (current->value)
-			free(current->value);
-		free(current);
-		current = temp;
-	}
-	*tokens = NULL;
+    if (!tokens || !*tokens)
+        return;
+    
+    current = *tokens;
+    while (current)
+    {
+        next = current->next;
+        if (current->value)
+            free(current->value); // Libera la cadena del token
+        free(current);            // Libera la estructura del token
+        current = next;
+    }
+    *tokens = NULL;
 }
 
 void	cleanup_command_fds(t_cmd *cmd)
@@ -69,18 +70,18 @@ void	free_commands(t_cmd **commands)
     while (current)
     {
         temp = current->next;
-        cleanup_command_fds(current);  // ✅ Cierra file descriptors
+        cleanup_command_fds(current);
         if (current->av)
         {
             i = 0;
-            while (current->av[i])  // ✅ Libera cada string
+            while (current->av[i]) // ✅ Usa un bucle while para recorrer los argumentos
             {
                 free(current->av[i]);
                 i++;
             }
-            free(current->av);  // ✅ Libera el array
+            free(current->av);
         }
-        free(current);  // ✅ Libera la estructura
+        free(current);
         current = temp;
     }
     *commands = NULL;

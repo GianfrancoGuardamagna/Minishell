@@ -77,31 +77,33 @@ char	*format_cwd(char *cwd)
 	char	*home;
 
 	home = ft_strjoin("/home/", getenv("USER"));
+	if (!home) // ✅ Valida si ft_strjoin falló
+		return (ft_strdup("Minishell$ "));
+
 	if (ft_strnstr(cwd, home, ft_strlen(home)))
 	{
-		if (ft_strlen(cwd) == 16)
+		if (ft_strlen(cwd) == ft_strlen(home)) // Compara longitudes
 			processed_cwd = ft_strdup("~");
 		else
 			processed_cwd = ft_strjoin("~", cwd + ft_strlen(home));
 	}
 	else
 		processed_cwd = ft_strdup(cwd);
+	
+	free(home); // ✅ Libera 'home' tan pronto como ya no se necesite
+
 	if (!processed_cwd)
-	{
-		free(home);
 		return (ft_strdup("Minishell$ "));
-	}
+	
 	len = ft_strlen(processed_cwd) + 3;
 	result = malloc(len);
 	if (!result)
 	{
 		free(processed_cwd);
-		free(home);
 		return (ft_strdup("Minishell$ "));
 	}
 	ft_strlcpy(result, processed_cwd, len);
 	ft_strlcat(result, "$ ", len);
 	free(processed_cwd);
-	free(home);
 	return (result);
 }
