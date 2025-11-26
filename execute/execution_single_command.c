@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   execution_single_command.c                         :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: gguardam <gguardam@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/11/26 11:20:34 by gguardam          #+#    #+#             */
+/*   Updated: 2025/11/26 11:36:37 by gguardam         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../minishell.h"
 
 int	got_path(t_shell *shell)
@@ -64,30 +76,30 @@ void	just_execute_it_man(t_shell *shell)
 
 void	execute_builtin(t_shell *shell)
 {
-    if (!shell || !shell->commands || !shell->commands->av || !shell->commands->av[0])
-        return;
-    if (!ft_strcmp(shell->commands->av[0], "cd"))
-    {
-        shell->exit_status = change_directory(shell->commands->av[1]);
-        if (shell->exit_status == 0)
-            update_envs(shell);
-    }
-    else if (!ft_strcmp(shell->commands->av[0], "pwd"))
-        shell->exit_status = ft_pwd(shell->commands);
-    else if (!ft_strcmp(shell->commands->av[0], "exit"))
-        manage_exit(shell);
-    else if (!ft_strcmp(shell->commands->av[0], "env"))  // ✅ SIN got_path
-        shell->exit_status = ft_env(shell);
-    else if (!ft_strcmp(shell->commands->av[0], "echo"))
-        shell->exit_status = ft_echo(shell->commands);
-    else if (!ft_strcmp(shell->commands->av[0], "export"))
-        shell->exit_status = export_variables(shell);
-    else if (!ft_strcmp(shell->commands->av[0], "unset"))
-        shell->exit_status = unset_variables(shell);
-    else if (ft_strchr(shell->commands->av[0], '='))
-        shell->exit_status = set_local_var(shell);
-    else
-        just_execute_it_man(shell);
+	if (!shell || !shell->commands || !shell->commands->av || !shell->commands->av[0])
+		return;
+	if (!ft_strcmp(shell->commands->av[0], "cd"))
+	{
+		shell->exit_status = change_directory(shell->commands->av[1]);
+		if (shell->exit_status == 0)
+			update_envs(shell);
+	}
+	else if (!ft_strcmp(shell->commands->av[0], "pwd"))
+		shell->exit_status = ft_pwd(shell->commands);
+	else if (!ft_strcmp(shell->commands->av[0], "exit"))
+		manage_exit(shell);
+	else if (!ft_strcmp(shell->commands->av[0], "env")  && got_path(shell))
+		shell->exit_status = ft_env(shell);
+	else if (!ft_strcmp(shell->commands->av[0], "echo"))
+		shell->exit_status = ft_echo(shell->commands);
+	else if (!ft_strcmp(shell->commands->av[0], "export"))
+		shell->exit_status = export_variables(shell);
+	else if (!ft_strcmp(shell->commands->av[0], "unset"))
+		shell->exit_status = unset_variables(shell);
+	else if (ft_strchr(shell->commands->av[0], '='))
+		shell->exit_status = set_local_var(shell);
+	else
+		just_execute_it_man(shell);
 }
 
 void	execute_command(t_shell *shell)
