@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   expander_pollo.c                                   :+:      :+:    :+:   */
+/*   expander_chicken.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: axgimene <axgimene@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/06 19:33:02 by axgimene          #+#    #+#             */
-/*   Updated: 2025/11/11 17:06:29 by axgimene         ###   ########.fr       */
+/*   Updated: 2025/11/26 13:10:12 by axgimene         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,22 +27,7 @@ static char	*append_char_to_result(char *result, char c)
 		free(temp);
 		return (NULL);
 	}
-	return (new_result);
-}
-
-static char	*append_expansion_to_result(char *result, char *expanded)
-{
-	char	*temp;
-	char	*new_result;
-
-	if (!expanded)
-		return (result);
-	temp = result;
-	new_result = ft_strjoin(result, expanded);
 	free(temp);
-	free(expanded);
-	if (!new_result)
-		return (NULL);
 	return (new_result);
 }
 
@@ -61,7 +46,10 @@ static char	*process_double_quote_content(t_shell *shell, char *str, int *i)
 		{
 			temp = append_char_to_result(result, '\'');
 			if (!temp)
-				return (result);
+			{
+				free(result);
+				return (NULL);
+			}
 			result = temp;
 			(*i)++;
 		}
@@ -69,20 +57,32 @@ static char	*process_double_quote_content(t_shell *shell, char *str, int *i)
 			&& !is_dollar_terminator(str[*i + 1]))
 		{
 			expanded = expand_dollar(shell, str, i);
-			temp = append_expansion_to_result(result, expanded);
+			if(!expanded)
+			{
+				free(result);
+				return (NULL);
+			}
+			temp = ft_strjoin(result, expanded);
+			free(result);
+			free(expanded);
 			if (!temp)
-				return (result);
+				return (NULL);
 			result = temp;
 		}
 		else
 		{
 			temp = append_char_to_result(result, str[*i]);
 			if (!temp)
-				return (result);
+			{
+				free(result);
+				return (NULL);
+			}
 			result = temp;
 			(*i)++;
 		}
 	}
+	if(str[*i] == '"')
+		(*i)++;
 	return (result);
 }
 
