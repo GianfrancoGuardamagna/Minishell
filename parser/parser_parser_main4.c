@@ -6,7 +6,7 @@
 /*   By: axgimene <axgimene@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/25 09:26:02 by axgimene          #+#    #+#             */
-/*   Updated: 2025/11/24 19:49:57 by axgimene         ###   ########.fr       */
+/*   Updated: 2025/11/26 17:40:47 by axgimene         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,11 +68,12 @@ static int	process_all_tokens(t_token **current, t_cmd **current_cmd)
     while (*current)
     {
         result = process_token_in_parser(current, current_cmd);
-        // ✅ AVANZA EL PUNTERO SIEMPRE, incluso cuando hay error
-        *current = (*current)->next;
-        
         if (!result)
             return (0);
+        
+        // ✅ SIEMPRE avanza aquí, sin condiciones
+        if (*current)
+            *current = (*current)->next;
     }
     return (1);
 }
