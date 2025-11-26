@@ -82,6 +82,7 @@ static int	execute_child_process(t_shell *shell, t_cmd *cmd, int prev_pipe_out, 
 {
 	char	**path_env;
 	char	*bin_path;
+	int		i;
 
 	setup_child_input(prev_pipe_out, cmd);
 	setup_child_output(cmd, pipe_fd);
@@ -91,17 +92,11 @@ static int	execute_child_process(t_shell *shell, t_cmd *cmd, int prev_pipe_out, 
 	bin_path = find_binary(cmd->av[0], path_env);
 	if (!bin_path)
 	{
-		// ✅ Valida si PATH existe
 		if (!got_path(shell))
-		{
 			write_error_message(STDERR_FILENO, cmd->av[0], "", "No such file or directory");
-		}
 		else
-		{
 			write_error_message(STDERR_FILENO, cmd->av[0], "", "command not found");
-		}
-		// ✅ Libera path_env
-		int i = 0;
+		i = 0;
 		while(path_env && path_env[i])
 			free(path_env[i++]);
 		free(path_env);
