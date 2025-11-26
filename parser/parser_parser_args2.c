@@ -6,7 +6,7 @@
 /*   By: axgimene <axgimene@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/08 16:57:41 by axgimene          #+#    #+#             */
-/*   Updated: 2025/11/24 18:48:42 by axgimene         ###   ########.fr       */
+/*   Updated: 2025/11/26 12:20:09 by axgimene         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,11 +53,9 @@ void	add_arg_to_command(t_cmd *cmd, char *arg)
 
     if (!cmd || !arg)
         return;
-    
     new_av = malloc(sizeof(char *) * (cmd->ac + 2));
     if (!new_av)
         return;
-    
     i = 0;
     while (i < cmd->ac)
     {
@@ -65,16 +63,14 @@ void	add_arg_to_command(t_cmd *cmd, char *arg)
         i++;
     }
     new_av[i] = ft_strdup(arg);
-    if (!new_av[i])  // ✅ Verifica si ft_strdup falló
+    if (!new_av[i])  //Verifica si ft_strdup falló
     {
         free(new_av);
         return;
     }
     new_av[i + 1] = NULL;
-    
     if (cmd->av)
         free(cmd->av);
-    
     cmd->av = new_av;
     cmd->ac++;
 }

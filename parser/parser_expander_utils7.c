@@ -6,7 +6,7 @@
 /*   By: axgimene <axgimene@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/30 12:00:50 by axgimene          #+#    #+#             */
-/*   Updated: 2025/11/24 19:35:03 by axgimene         ###   ########.fr       */
+/*   Updated: 2025/11/26 12:19:29 by axgimene         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,27 +87,22 @@ char	*expand_string(t_shell *shell, char *str)
 
     if (!str || !str[0])
         return (ft_strdup(""));
-    
     i = 0;
     result = ft_strdup("");
     if (!result)
         return (NULL);
-    
     while (str[i])
     {
         part = process_char_in_expansion(shell, str, &i);
         if (!part)
             continue;
-        
         new_result = ft_strjoin(result, part);
         free(part);
-        
         if (!new_result)
         {
             free(result);
             return (NULL);
         }
-        
         free(result);
         result = new_result;
     }
