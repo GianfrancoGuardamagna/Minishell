@@ -6,7 +6,7 @@
 /*   By: axgimene <axgimene@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/30 12:00:50 by axgimene          #+#    #+#             */
-/*   Updated: 2025/11/26 12:19:29 by axgimene         ###   ########.fr       */
+/*   Updated: 2025/11/27 17:28:47 by axgimene         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,22 +36,33 @@ static char	*process_char_in_expansion(t_shell *shell, char *str, int *i)
         return (handle_regular_char(str, i));
 }
 
-// ✅ FUNCIÓN HELPER PARA DETECTAR SI HAY EXPANSIÓN
-static int	requires_expansion(char *str)
+// ✅ Añade esta función aquí
+static char	*remove_quotes_from_token(char *token)
 {
-    int	i;
+    char	*result;
+    int		len;
+    int		start;
+    int		end;
 
-    i = 0;
-    while (str[i])
+    if (!token || token[0] == '\0')
+        return (ft_strdup(""));
+    len = ft_strlen(token);
+    start = 0;
+    end = len;
+    if (len >= 2 && ((token[0] == '"' && token[len - 1] == '"') || 
+        (token[0] == '\'' && token[len - 1] == '\'')))
     {
-        if (str[i] == '$' && str[i + 1] && !is_dollar_terminator(str[i + 1]))
-            return (1);
-        i++;
+        start = 1;
+        end = len - 1;
     }
-    return (0);
+    result = malloc(end - start + 1);
+    if (!result)
+        return (NULL);
+    ft_strlcpy(result, token + start, end - start + 1);
+    return (result);
 }
 
-void	expand_variables(t_shell *shell, t_token *tokens)
+void	expand_variables(t_token *tokens)
 {
     t_token	*current;
     char	*expanded;
@@ -59,20 +70,11 @@ void	expand_variables(t_shell *shell, t_token *tokens)
     current = tokens;
     while (current)
     {
-        if (current->type == T_WORD && current->value)
+        if (current->value)
         {
-            // Solo expande si es necesario
-            if (requires_expansion(current->value))
-            {
-                expanded = expand_string(shell, current->value);
-                if (expanded)
-                {
-                    free(current->value);
-                    current->value = expanded;
-                }
-                // ✅ Si expand_string falla, mantenemos el valor original
-                // (no es un error crítico, solo no se expande)
-            }
+            expanded = remove_quotes_from_token(current->value);
+            free(current->value);
+            current->value = expanded;
         }
         current = current->next;
     }

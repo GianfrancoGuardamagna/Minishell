@@ -4,28 +4,10 @@ int g_exit_status = 0;
 t_shell *g_shell = NULL;
 
 // ✅ Función de limpieza automática al salir
-static void	cleanup_on_exit(void)
+void	cleanup_on_exit(void)
 {
-	if (g_shell)
-	{
-		if (g_shell->prompt)
-		{
-			free(g_shell->prompt);
-			g_shell->prompt = NULL;
-		}
-		if (g_shell->tokens)
-		{
-			free_tokens(&g_shell->tokens);
-			g_shell->tokens = NULL;
-		}
-		if (g_shell->commands)
-		{
-			free_commands(&g_shell->commands);
-			g_shell->commands = NULL;
-		}
-		cleanup_shell(g_shell);
-	}
-	rl_clear_history();
+    if (g_shell)
+        cleanup_shell(g_shell);
 }
 
 void	free_shell_after_execution(t_shell *shell)
@@ -90,68 +72,52 @@ int	check_unclosed_quotes(char *input)
 
 static void	process_input(t_shell	*shell, char *input)
 {
-	if (check_unclosed_quotes(input))
-	{
-		free(input);
-		return ;
-	}
-	add_history(input);
-	free_shell_after_execution(shell);
-	shell->tokens = tokenize(input);
-	if (shell->tokens)
-	{
-		expand_variables(shell, shell->tokens);
-		shell->commands = parse_tokens(shell->tokens);
-		if (shell->commands)
-		{
-			evaluate_struct(shell);
-		}
-		free_shell_after_execution(shell);
-	}
-	free(input);
+    if (check_unclosed_quotes(input))
+    {
+        free(input);
+        return ;
+    }
+    add_history(input);
+    free_shell_after_execution(shell);
+    shell->tokens = tokenize(input);
+    if (shell->tokens)
+    {
+        expand_variables(shell->tokens);  // ✅ Sin shell
+        shell->commands = parse_tokens(shell->tokens);
+        if (shell->commands)
+        {
+            evaluate_struct(shell);
+        }
+        free_shell_after_execution(shell);
+    }
+    free(input);
 }
 
 int	main(int argc, char **argv, char **envp)
 {
-	char	*input;
-	t_shell	shell;
-	char    cwd_buffer[1024];
+    char	*input;
+    t_shell	shell;
 
-	(void)argc;
-	(void)argv;
-	g_shell = &shell;
-	init_shell(&shell, envp);
-	init_signals();
-	atexit(cleanup_on_exit);
-	while (1)
-	{
-		if (shell.prompt)
-		{
-			free(shell.prompt);
-			shell.prompt = NULL;
-		}
-		if (getcwd(cwd_buffer, sizeof(cwd_buffer)) != NULL)
-			shell.prompt = format_cwd(cwd_buffer);
-		else
-			shell.prompt = ft_strdup("Minishell$ ");
-		input = readline(shell.prompt);
-		if (!input)
-		{
-			if (shell.prompt)
-			{
-				free(shell.prompt);
-				shell.prompt = NULL;
-			}
-			null_input();
-		}
-		if (input && *input)
-			process_input(&shell, input);
-		else
-		{
-			free(input);
-			input = NULL;
-		}
-	}
-	cleanup_shell(&shell);
-	return (0);
+    (void)argc;
+    (void)argv;
+    ft_memset(&shell, 0, sizeof(t_shell));
+    g_shell = &shell;
+    atexit(cleanup_on_exit);
+    init_shell(&shell, envp);
+    init_signals();
+    while (1)
+    {
+        input = readline(shell.prompt);
+        if (!input)
+        {
+            ft_putstr_fd("exit\n", STDOUT_FILENO);
+            break ;
+        }
+        process_input(&shell, input);
+        free(input);
+        // ✅ Verifica si fue exit
+        if (shell.commands && !ft_strcmp(shell.commands->av[0], "exit"))
+            break ;
+    }
+    return (g_exit_status);
 }

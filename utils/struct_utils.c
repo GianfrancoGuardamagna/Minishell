@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   struct_utils.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: gguardam <gguardam@student.42.fr>          +#+  +:+       +#+        */
+/*   By: axgimene <axgimene@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/10 18:37:43 by gguardam          #+#    #+#             */
-/*   Updated: 2025/11/26 11:55:58 by gguardam         ###   ########.fr       */
+/*   Updated: 2025/11/27 18:58:02 by axgimene         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,94 +14,124 @@
 
 char	**copy_env(char **env)
 {
-	char	**new_env;
-	int		i;
-	int		count;
+    char	**new_env;
+    int		i;
+    int		count;
+    int		j;
 
-	if (!env)
-		return (NULL);
-	count = 0;
-	while (env[count])
-		count++;
-	new_env = malloc(sizeof(char *) * (count + 1));
-	if (!new_env)
-		return (NULL);
-	i = 0;
-	while (i < count)
-	{
-		new_env[i] = ft_strdup(env[i]);
-		if (!new_env[i])
-		{
-			while (i > 0)
-				free(new_env[--i]);
-			free(new_env);
-			return (NULL);
-		}
-		i++;
-	}
-	new_env[count] = NULL;
-	return (new_env);
+    if (!env)
+        return (NULL);
+    count = 0;
+    while (env[count])
+        count++;
+    new_env = malloc(sizeof(char *) * (count + 1));
+    if (!new_env)
+        return (NULL);
+    i = 0;
+    while (i < count)
+    {
+        new_env[i] = ft_strdup(env[i]);
+        if (!new_env[i])
+        {
+            j = 0;
+            while (j < i)
+            {
+                free(new_env[j]);
+                new_env[j] = NULL;
+                j++;
+            }
+            free(new_env);
+            new_env = NULL;
+            return (NULL);
+        }
+        i++;
+    }
+    new_env[count] = NULL;
+    return (new_env);
 }
 
 void	init_shell(t_shell *shell, char **envp)
 {
-	if (!shell)
-		return ;
-	shell->env = copy_env(envp);
-	shell->local_vars = NULL;
-	shell->tokens = NULL;
-	shell->commands = NULL;
-	shell->prompt = NULL;
-	shell->exit_status = 0;
-	shell->stdin_copy = STDIN_FILENO;
-	shell->stdout_copy = STDOUT_FILENO;
+    char	*cwd;
+
+    if (!shell)
+        return ;
+    cwd = getcwd(NULL, 0);
+    shell->prompt = format_cwd(cwd);
+    if (cwd)
+        free(cwd);
+    shell->tokens = NULL;
+    shell->commands = NULL;
+    shell->exit_status = 0;
+    shell->stdin_copy = dup(STDIN_FILENO);
+    shell->stdout_copy = dup(STDOUT_FILENO);
+    shell->env = copy_env(envp);
+    if (!shell->env)
+    {
+        shell->env = malloc(sizeof(char *));
+        if (shell->env)
+            shell->env[0] = NULL;
+    }
+    // ✅ CRÍTICO: Inicializa local_vars AQUÍ
+    shell->local_vars = malloc(sizeof(char *));
+    if (shell->local_vars)
+        shell->local_vars[0] = NULL;
+    else
+        shell->local_vars = NULL;  // ✅ Asegúrate de que sea NULL si falla
 }
 
 void	cleanup_shell(t_shell *shell)
 {
-	int	i;
+    int	i;
 
-	if (!shell)
-		return ;
-	if (shell->prompt)
-	{
-		free(shell->prompt);
-		shell->prompt = NULL;
-	}
-	if (shell->tokens)
-	{
-		free_tokens(&shell->tokens);
-		shell->tokens = NULL;
-	}
-	if (shell->commands)
-	{
-		free_commands(&shell->commands);
-		shell->commands = NULL;
-	}
-	if (shell->local_vars)
-	{
-		i = 0;
-		while (shell->local_vars[i])
-		{
-			free(shell->local_vars[i]);
-			shell->local_vars[i] = NULL;
-			i++;
-		}
-		free(shell->local_vars);
-		shell->local_vars = NULL;
-	}
-	if (shell->env)
-	{
-		i = 0;
-		while (shell->env[i])
-		{
-			free(shell->env[i]);
-			shell->env[i] = NULL;
-			i++;
-		}
-		free(shell->env);
-		shell->env = NULL;
-	}
+    if (!shell)
+        return ;
+    if (shell->prompt)
+    {
+        free(shell->prompt);
+        shell->prompt = NULL;
+    }
+    if (shell->tokens)
+    {
+        free_tokens(&shell->tokens);
+        shell->tokens = NULL;
+    }
+    if (shell->commands)
+    {
+        free_commands(&shell->commands);
+        shell->commands = NULL;
+    }
+    if (shell->stdin_copy > 2)
+        close(shell->stdin_copy);
+    if (shell->stdout_copy > 2)
+        close(shell->stdout_copy);
+    
+    // ✅ Verifica que env no sea NULL
+    if (shell->env)
+    {
+        i = 0;
+        while (shell->env[i])
+        {
+            free(shell->env[i]);
+            shell->env[i] = NULL;
+            i++;
+        }
+        free(shell->env);
+        shell->env = NULL;
+    }
+    // ✅ Verifica que local_vars no sea NULL
+    if (shell->local_vars)
+    {
+        i = 0;
+        while (shell->local_vars[i])
+        {
+            free(shell->local_vars[i]);
+            shell->local_vars[i] = NULL;
+            i++;
+        }
+        free(shell->local_vars);
+        shell->local_vars = NULL;
+    }
 }
 
 void	check_struct(t_shell *shell)

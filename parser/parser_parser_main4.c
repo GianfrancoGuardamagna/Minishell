@@ -6,7 +6,7 @@
 /*   By: axgimene <axgimene@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/25 09:26:02 by axgimene          #+#    #+#             */
-/*   Updated: 2025/11/26 17:40:47 by axgimene         ###   ########.fr       */
+/*   Updated: 2025/11/27 18:39:06 by axgimene         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,67 +14,23 @@
 
 static int	process_word_token(t_token *current_token, t_cmd *current_cmd)
 {
+    if (!current_cmd)
+        return (0);
     add_arg_to_command(current_cmd, current_token->value);
     return (1);
 }
 
-static int	process_redir_token(t_token **current_token, t_cmd **current_cmd)
+static int	process_pipe_token(t_token **current_token, t_cmd **current_cmd)
 {
-    t_token	*redir_token;
-    t_token	*filename_token;
+    t_cmd	*new_cmd;
 
-    redir_token = *current_token;
-    filename_token = redir_token->next;
-
-    if (!filename_token || filename_token->type != T_WORD)
-    {
-        ft_putstr_fd("minishell: syntax error near unexpected token `", 2);
-        if (filename_token)
-            ft_putstr_fd(filename_token->value, 2);
-        else
-            ft_putstr_fd("newline", 2);
-        ft_putstr_fd("'\n", 2);
-        *current_cmd = NULL;
+    (void)current_token;
+    new_cmd = create_command();
+    if (!new_cmd)
         return (0);
-    }
-    if (!handle_redirection(current_token, *current_cmd))
-    {
-        *current_cmd = NULL;
-        return (0);
-    }
-    // NO avances el puntero aquí. El bucle principal lo hará.
-    return (1);
-}
-
-static int	process_token_in_parser(t_token **current_token,
-    t_cmd **current_cmd)
-{
-    if (*current_cmd == NULL)
-        return (0);
-    if ((*current_token)->type == T_WORD)
-        return (process_word_token(*current_token, *current_cmd));
-    else if ((*current_token)->type == T_PIPE)
-        return (handle_pipe_token(current_token, current_cmd));
-    else if (is_redirection_token((*current_token)->type))
-        return (process_redir_token(current_token, current_cmd));
-    
-    return (1);
-}
-
-static int	process_all_tokens(t_token **current, t_cmd **current_cmd)
-{
-    int	result;
-
-    while (*current)
-    {
-        result = process_token_in_parser(current, current_cmd);
-        if (!result)
-            return (0);
-        
-        // ✅ SIEMPRE avanza aquí, sin condiciones
-        if (*current)
-            *current = (*current)->next;
-    }
+    setup_pipe_fds(*current_cmd, new_cmd);
+    (*current_cmd)->next = new_cmd;
+    *current_cmd = new_cmd;
     return (1);
 }
 
@@ -82,26 +38,47 @@ t_cmd	*parse_tokens(t_token *tokens)
 {
     t_cmd	*head;
     t_cmd	*current_cmd;
-    t_token	*current;
+    t_token	*current_token;
 
-    if (!tokens)
-        return (NULL);
-    current = tokens;
     head = NULL;
-    init_first_command(&head, &current_cmd);
-    if (!current_cmd)
-        return (NULL);
-    
-    if (!process_all_tokens(&current, &current_cmd))
+    current_cmd = NULL;
+    current_token = tokens;
+    while (current_token)
     {
-        free_commands(&head);
-        return (NULL);
+        if (current_token->type == T_WORD)
+        {
+            if (!current_cmd)
+            {
+                current_cmd = create_command();
+                if (!head)
+                    head = current_cmd;
+            }
+            if (!process_word_token(current_token, current_cmd))
+                return (NULL);
+            current_token = current_token->next;
+        }
+        else if (current_token->type == T_PIPE)
+        {
+            set_builtin_flag(current_cmd);  // ✅ Marca ANTES de crear nuevo comando
+            if (!process_pipe_token(&current_token, &current_cmd))
+                return (NULL);
+            current_token = current_token->next;
+        }
+        else if (current_token->type == T_REDIR_IN || 
+                current_token->type == T_REDIR_OUT || 
+                current_token->type == T_APPEND || 
+                current_token->type == T_HEREDOC)
+        {
+            if (!handle_redirection(&current_token, current_cmd))
+                return (NULL);
+        }
+        else
+        {
+            current_token = current_token->next;
+        }
     }
-    if (!validate_final_command(current_cmd))
-    {
-        free_commands(&head);
-        return (NULL);
-    }
-    set_builtin_flag(current_cmd);
+    // ✅ CRÍTICO: Marca el último comando como builtin si aplica
+    if (current_cmd)
+        set_builtin_flag(current_cmd);
     return (head);
 }
