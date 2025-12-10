@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   export_utils.c                                     :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: axgimene <axgimene@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/11/10 18:37:44 by gguardam          #+#    #+#             */
+/*   Updated: 2025/12/05 18:04:30 by axgimene         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../minishell.h"
 
 //char	*create_var_without_value(char *var_assignment, int *name_len)
@@ -39,8 +51,8 @@ char **var_name, int *name_len)
 void	update_env_array(char **env_var, char *new_var, char *var_name, \
 int name_len)
 {
-	int	var_index;
-	int	env_count;
+	int		var_index;
+	int		env_count;
 
 	var_index = find_variable_index(env_var, var_name, name_len);
 	if (var_index != -1)
@@ -73,7 +85,6 @@ void	add_or_modify_var(char **env_var, char *var_assignment)
 		new_var = create_var_with_value(var_assignment, equals_pos, \
 &var_name, &name_len);
 	}
-	
 	if (new_var)
 		update_env_array(env_var, new_var, var_name, name_len);
 	if (equals_pos && var_name != var_assignment)
@@ -88,6 +99,8 @@ char	*extract_var_name(char *var_assignment, char *equals_pos)
 	if (equals_pos)
 	{
 		name_len = equals_pos - var_assignment;
+		if (name_len > 0 && var_assignment[name_len - 1] == '+')
+			name_len--;
 		var_name = malloc(name_len + 1);
 		if (!var_name)
 			return (NULL);
@@ -106,15 +119,15 @@ char	*extract_var_value(char *var_assignment)
 	int		i;
 
 	i = 0;
-	while(var_assignment[i] != '=')
+	while (var_assignment[i] != '=')
 		i++;
 	name_len = i;
-	value_len = ft_strlen(var_assignment) - name_len - 1;  // -1 to exclude '='
+	value_len = ft_strlen(var_assignment) - name_len - 1;
 	var_value = malloc(value_len + 1);
 	if (!var_value)
 		return (NULL);
 	i = 0;
-	while(i < value_len)
+	while (i < value_len)
 	{
 		var_value[i] = var_assignment[name_len + 1 + i];
 		i++;

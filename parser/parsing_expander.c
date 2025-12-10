@@ -6,37 +6,44 @@
 /*   By: gguardam <gguardam@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/29 15:17:13 by axgimene          #+#    #+#             */
-/*   Updated: 2025/11/26 11:36:04 by gguardam         ###   ########.fr       */
+/*   Updated: 2025/12/05 14:48:44 by gguardam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
-static char	*get_env_value(t_shell *shell, char *var_name)
+static char	*search_in_env_array(char **env, char *var_name, int len)
 {
 	int	i;
-	int	len;
+
+	i = 0;
+	while (env[i])
+	{
+		if (ft_strncmp(env[i], var_name, len) == 0 && env[i][len] == '=')
+			return (ft_strdup(env[i] + len + 1));
+		i++;
+	}
+	return (NULL);
+}
+
+static char	*get_env_value(t_shell *shell, char *var_name)
+{
+	int		len;
+	char	*result;
 
 	if (!shell || !var_name)
 		return (ft_strdup(""));
 	if (ft_strncmp(var_name, "?", 1) == 0)
 		return (ft_itoa(shell->exit_status));
-	i = 0;
 	len = ft_strlen(var_name);
-	while (shell->env[i])
+	result = search_in_env_array(shell->env, var_name, len);
+	if (result)
+		return (result);
+	if (shell->local_vars)
 	{
-		if (ft_strncmp(shell->env[i], var_name, len) == 0
-			&& shell->env[i][len] == '=')
-			return (ft_strdup(shell->env[i] + len + 1));
-		i++;
-	}
-	i = 0;
-	while (shell->local_vars[i])
-	{
-		if (ft_strncmp(shell->local_vars[i], var_name, len) == 0
-			&& shell->local_vars[i][len] == '=')
-			return (ft_strdup(shell->local_vars[i] + len + 1));
-		i++;
+		result = search_in_env_array(shell->local_vars, var_name, len);
+		if (result)
+			return (result);
 	}
 	return (ft_strdup(""));
 }
@@ -77,21 +84,4 @@ char	*expand_dollar(t_shell *shell, char *str, int *i)
 	if (!var_value)
 		return (ft_strdup(""));
 	return (var_value);
-}
-
-char	*handle_single_quotes(char *str, int *i)
-{
-	int		start;
-	char	*quoted_content;
-
-	++(*i);
-	start = *i;
-	while (str[*i] && str[*i] != '\'')
-		(*i)++;
-	quoted_content = ft_substr(str, start, *i - start);
-	if (!quoted_content)
-		return (NULL);
-	if (str[*i] == '\'')
-		(*i)++;
-	return (quoted_content);
 }

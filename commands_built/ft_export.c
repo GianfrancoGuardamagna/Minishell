@@ -1,6 +1,16 @@
-#include "../minishell.h"
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_export.c                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: axgimene <axgimene@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/11/10 18:35:25 by gguardam          #+#    #+#             */
+/*   Updated: 2025/12/05 15:39:55 by axgimene         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
-//Mostrar "declare -x VAR="var", en orden alfabetico y los valores enter ""
+#include "../minishell.h"
 
 static int	compare_env_vars(char *var1, char *var2)
 {
@@ -9,7 +19,6 @@ static int	compare_env_vars(char *var1, char *var2)
 	i = 0;
 	while (var1[i] && var2[i] && var1[i] == var2[i])
 		i++;
-	
 	return ((unsigned char)var1[i] - (unsigned char)var2[i]);
 }
 
@@ -37,48 +46,47 @@ static void	sort_env_vars(char **vars, int count)
 	}
 }
 
+static void	print_sorted_var(char *var, int out_fd)
+{
+	char	*equals_pos;
+
+	equals_pos = ft_strchr(var, '=');
+	ft_putstr_fd("declare -x ", out_fd);
+	if (equals_pos)
+	{
+		*equals_pos = '\0';
+		ft_putstr_fd(var, out_fd);
+		ft_putstr_fd("=\"", out_fd);
+		ft_putstr_fd(equals_pos + 1, out_fd);
+		ft_putstr_fd("\"\n", out_fd);
+		*equals_pos = '=';
+	}
+	else
+	{
+		ft_putstr_fd(var, out_fd);
+		ft_putstr_fd("\n", out_fd);
+	}
+}
+
 void	ft_export_env(t_shell *shell)
 {
 	int		i;
 	int		count;
 	char	**sorted_vars;
-	char	*equals_pos;
 
 	count = 0;
 	while (shell->env[count])
 		count++;
 	sorted_vars = malloc(sizeof(char *) * (count + 1));
 	if (!sorted_vars)
-		return;
-	i = 0;
-	while (i < count)
-	{
+		return ;
+	i = -1;
+	while (++i < count)
 		sorted_vars[i] = shell->env[i];
-		i++;
-	}
 	sorted_vars[count] = NULL;
 	sort_env_vars(sorted_vars, count);
-	i = 0;
-	while (i < count)
-	{
-		equals_pos = ft_strchr(sorted_vars[i], '=');
-		ft_putstr_fd("declare -x ", shell->commands->out_fd);
-		if (equals_pos)
-		{
-			*equals_pos = '\0';
-			ft_putstr_fd(sorted_vars[i], shell->commands->out_fd);
-			ft_putstr_fd("=\"", shell->commands->out_fd);
-			ft_putstr_fd(equals_pos + 1, shell->commands->out_fd);
-			ft_putstr_fd("\"\n", shell->commands->out_fd);
-			*equals_pos = '=';
-		}
-		else
-		{
-			ft_putstr_fd(sorted_vars[i], shell->commands->out_fd);
-			ft_putstr_fd("\n", shell->commands->out_fd);
-		}
-		i++;
-	}
-	
+	i = -1;
+	while (++i < count)
+		print_sorted_var(sorted_vars[i], shell->commands->out_fd);
 	free(sorted_vars);
 }

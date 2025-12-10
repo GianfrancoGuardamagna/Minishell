@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   parser_redirectionsPollo.c                         :+:      :+:    :+:   */
+/*   parser_redirections_Chicken.c                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: axgimene <axgimene@student.42.fr>          +#+  +:+       +#+        */
+/*   By: gguardam <gguardam@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/05 13:50:28 by axgimene          #+#    #+#             */
-/*   Updated: 2025/11/11 16:53:24 by axgimene         ###   ########.fr       */
+/*   Updated: 2025/12/05 14:46:45 by gguardam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,15 +45,15 @@ int	handle_redirection(t_token **tokens, t_cmd *cmd)
 {
 	t_token_type	type;
 	char			*filename;
+	t_token			*filename_token;
 
 	if (!tokens || !*tokens || !cmd)
 		return (0);
 	type = (*tokens)->type;
-	*tokens = (*tokens)->next;
-	if (!*tokens || (*tokens)->type != T_WORD)
+	filename_token = (*tokens)->next;
+	if (!filename_token || filename_token->type != T_WORD)
 		return (0);
-	filename = (*tokens)->value;
+	filename = filename_token->value;
 	handle_redirection_mid(type, filename, cmd);
-	*tokens = (*tokens)->next;
 	return (1);
 }
